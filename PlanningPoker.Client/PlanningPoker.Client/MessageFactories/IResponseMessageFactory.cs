@@ -2,7 +2,7 @@ using PlanningPoker.Client.Messages;
 
 namespace PlanningPoker.Client.MessageFactories
 {
-    public interface IResponseMessageFactory
+    internal interface IResponseMessageFactory
     {
         ResponseMessage Get(string message);
     }

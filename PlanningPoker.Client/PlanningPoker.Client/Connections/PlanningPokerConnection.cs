@@ -12,7 +12,7 @@ using PlanningPoker.Client.Messages;
 using PlanningPoker.Client.Model;
 using PlanningPoker.Client.Utilities;
 
-namespace PlanningPoker.Client
+namespace PlanningPoker.Client.Connections
 {
     public sealed class PlanningPokerConnection
     {

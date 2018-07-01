@@ -6,14 +6,14 @@ using PlanningPoker.Client.Utilities;
 
 namespace PlanningPoker.Client.MessageFactories
 {
-    public class NewSessionResponseMessageFactory : IResponseMessageFactory
+    internal sealed class NewSessionResponseMessageFactory : IResponseMessageFactory
     {
         private MessageParser _messageParser;
-        public NewSessionResponseMessageFactory(MessageParser messageParser)
+        internal NewSessionResponseMessageFactory(MessageParser messageParser)
         {
             _messageParser = messageParser;
         }
-        public virtual ResponseMessage Get(string message)
+        public ResponseMessage Get(string message)
         {
             if (string.IsNullOrWhiteSpace(message))
             {

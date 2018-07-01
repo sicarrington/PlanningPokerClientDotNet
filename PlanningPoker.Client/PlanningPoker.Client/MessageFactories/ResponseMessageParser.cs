@@ -8,16 +8,16 @@ using PlanningPoker.Client.Utilities;
 
 namespace PlanningPoker.Client.MessageFactories
 {
-    public class ResponseMessageParser : IResponseMessageParser
+    internal sealed class ResponseMessageParser : IResponseMessageParser
     {
         MessageParser _messageParser;
         IEnumerable<IResponseMessageFactory> _responseMessageFactories;
-        public ResponseMessageParser(MessageParser messageParser, IEnumerable<IResponseMessageFactory> responseMessageFactories)
+        internal ResponseMessageParser(MessageParser messageParser, IEnumerable<IResponseMessageFactory> responseMessageFactories)
         {
             _messageParser = messageParser;
             _responseMessageFactories = responseMessageFactories;
         }
-        public virtual ResponseMessage Get(string message)
+        public ResponseMessage Get(string message)
         {
             if (string.IsNullOrWhiteSpace(message))
             {

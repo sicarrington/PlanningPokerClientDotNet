@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace PlanningPoker.Client.Connections
 {
-    internal class PlanningPokerSocket : IPokerConnection
+    internal sealed class PlanningPokerSocket : IPokerConnection
     {
         private const int ReceiveChunkSize = 1024;
         private ClientWebSocket _planningConnection;

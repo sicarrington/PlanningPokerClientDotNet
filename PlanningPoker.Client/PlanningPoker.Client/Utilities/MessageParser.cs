@@ -5,15 +5,15 @@ using PlanningPoker.Client.Model;
 
 namespace PlanningPoker.Client.Utilities
 {
-    public class MessageParser
+    internal class MessageParser
     {
         public virtual string GetFieldFromMessage(string message, string fieldName)
         {
-            if(string.IsNullOrWhiteSpace(message))
+            if (string.IsNullOrWhiteSpace(message))
             {
                 throw new ArgumentNullException(nameof(message));
             }
-            if(string.IsNullOrWhiteSpace(fieldName))
+            if (string.IsNullOrWhiteSpace(fieldName))
             {
                 throw new ArgumentNullException(nameof(fieldName));
             }
@@ -28,7 +28,7 @@ namespace PlanningPoker.Client.Utilities
         }
         public virtual ResponseMessageType GetTypeOfMessage(string message)
         {
-            if(string.IsNullOrWhiteSpace(message))
+            if (string.IsNullOrWhiteSpace(message))
             {
                 throw new ArgumentNullException(nameof(message));
             }
@@ -57,13 +57,13 @@ namespace PlanningPoker.Client.Utilities
         }
         public virtual bool IsSuccessfulMessage(string message)
         {
-            if(string.IsNullOrWhiteSpace(message))
+            if (string.IsNullOrWhiteSpace(message))
             {
                 throw new ArgumentNullException(nameof(message));
             }
             var successField = GetFieldFromMessage(message, "Success");
             bool success;
-            if(bool.TryParse(successField, out success))
+            if (bool.TryParse(successField, out success))
             {
                 return success;
             }
