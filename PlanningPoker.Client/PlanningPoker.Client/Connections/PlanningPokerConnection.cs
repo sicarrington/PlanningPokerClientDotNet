@@ -45,6 +45,12 @@ namespace PlanningPoker.Client.Connections
             await _pokerConnection.Send("PP 1.0\nMessageType:NewSession\nUserName:" + hostName);
         }
 
+        public async Task SubscribeSession(string userId, string sessionId)
+        {
+            // await _pokerConnection.Send("PP 1.0\nMessageType:SubscribeMessage\nUserId:" +
+            //     userId + "\nSessionId:" + sessionId + "\nToken:" + user_info.token);
+        }
+
         private void ProcessMessageFromServer(string message)
         {
             try
