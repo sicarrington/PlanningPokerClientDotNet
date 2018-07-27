@@ -12,6 +12,7 @@ namespace PlanningPoker.Client
             services.AddSingleton<IResponseMessageParser, ResponseMessageParser>();
             services.AddSingleton<MessageParser, MessageParser>();
             services.AddTransient<IPokerConnection, PlanningPokerSocket>();
+            services.AddSingleton<UserCacheProvider, UserCacheProvider>();
 
             services = AddResponseMessageFactories(services);
             return services;

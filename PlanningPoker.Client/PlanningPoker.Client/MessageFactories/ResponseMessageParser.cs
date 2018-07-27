@@ -12,7 +12,7 @@ namespace PlanningPoker.Client.MessageFactories
     {
         MessageParser _messageParser;
         IEnumerable<IResponseMessageFactory> _responseMessageFactories;
-        internal ResponseMessageParser(MessageParser messageParser, IEnumerable<IResponseMessageFactory> responseMessageFactories)
+        public ResponseMessageParser(MessageParser messageParser, IEnumerable<IResponseMessageFactory> responseMessageFactories)
         {
             _messageParser = messageParser;
             _responseMessageFactories = responseMessageFactories;

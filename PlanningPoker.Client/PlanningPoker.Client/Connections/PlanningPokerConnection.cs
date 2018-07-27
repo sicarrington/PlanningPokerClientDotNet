@@ -20,6 +20,7 @@ namespace PlanningPoker.Client.Connections
         private CancellationToken _cancellationToken;
         private IResponseMessageParser _responseMessageParser;
         private IPokerConnection _pokerConnection;
+        private UserCacheProvider _userCacheProvider;
 
         private Action<Exception> _onError;
         private Action _onDisconnected;
@@ -27,11 +28,13 @@ namespace PlanningPoker.Client.Connections
         private Action _onSessionCreationFailed;
 
         internal PlanningPokerConnection(IOptions<ConnectionSettings> connectionSettings,
-            IResponseMessageParser responseMessageFactory, IPokerConnection pokerConnection)
+            IResponseMessageParser responseMessageParser, IPokerConnection pokerConnection,
+            UserCacheProvider userCacheProvider)
         {
             _planningSettings = connectionSettings.Value;
-            _responseMessageParser = responseMessageFactory;
+            _responseMessageParser = responseMessageParser;
             _pokerConnection = pokerConnection;
+            _userCacheProvider = userCacheProvider;
         }
 
         public Task Start(CancellationToken cancellationToken)
@@ -42,6 +45,10 @@ namespace PlanningPoker.Client.Connections
 
         public async Task CreateSession(string hostName)
         {
+            if (string.IsNullOrWhiteSpace(hostName))
+            {
+                throw new ArgumentNullException(nameof(hostName));
+            }
             await _pokerConnection.Send("PP 1.0\nMessageType:NewSession\nUserName:" + hostName);
         }
 

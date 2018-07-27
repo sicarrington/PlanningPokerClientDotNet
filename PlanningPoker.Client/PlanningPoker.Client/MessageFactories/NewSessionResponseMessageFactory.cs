@@ -9,7 +9,7 @@ namespace PlanningPoker.Client.MessageFactories
     internal sealed class NewSessionResponseMessageFactory : IResponseMessageFactory
     {
         private MessageParser _messageParser;
-        internal NewSessionResponseMessageFactory(MessageParser messageParser)
+        public NewSessionResponseMessageFactory(MessageParser messageParser)
         {
             _messageParser = messageParser;
         }

@@ -10,7 +10,7 @@ namespace PlanningPoker.Client.Utilities
     internal class UserCacheProvider
     {
         private ConcurrentDictionary<string, UserCacheItem> _userCache;
-        internal UserCacheProvider()
+        public UserCacheProvider()
         {
             _userCache = new ConcurrentDictionary<string, UserCacheItem>();
         }

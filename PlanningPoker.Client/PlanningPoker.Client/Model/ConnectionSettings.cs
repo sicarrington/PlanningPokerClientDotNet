@@ -2,10 +2,10 @@ using System;
 
 namespace PlanningPoker.Client
 {
-    public sealed class ConnectionSettings
+    internal class ConnectionSettings
     {
-        public Uri PlanningSocketUri { get; set; }
-        public Uri PlanningApiUri { get; set; }
+        public virtual Uri PlanningSocketUri { get; set; }
+        public virtual Uri PlanningApiUri { get; set; }
 
         public ConnectionSettings()
         {

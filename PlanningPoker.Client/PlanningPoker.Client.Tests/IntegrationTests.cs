@@ -33,8 +33,9 @@ namespace PlanningPoker.Client.Tests
             var serviceProvider = serviceCollection.BuildServiceProvider();
             var responseMessageParser = serviceProvider.GetService<IResponseMessageParser>();
             var pokerConnection = serviceProvider.GetService<IPokerConnection>();
+            var userCacheProvider = serviceProvider.GetService<UserCacheProvider>();
 
-            var planningConnection = new PlanningPokerConnection(optionsMock.Object, responseMessageParser, pokerConnection);
+            var planningConnection = new PlanningPokerConnection(optionsMock.Object, responseMessageParser, pokerConnection, userCacheProvider);
             await planningConnection.Start(CancellationToken.None);
             await planningConnection.CreateSession("Simon");
 
