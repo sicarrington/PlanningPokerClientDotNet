@@ -22,12 +22,14 @@ namespace PlanningPoker.Client.Messages
             {
                 throw new ArgumentNullException(nameof(userToken));
             }
+            Success = true;
             SessionId = sessionId;
             UserId = userId;
             UserToken = userToken;
         }
         internal NewSessionResponse(string errorMessage = null) : base(false)
         {
+            this.Success = false;
             this.ErrorMessage = errorMessage;
         }
     }

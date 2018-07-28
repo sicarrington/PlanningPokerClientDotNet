@@ -78,6 +78,13 @@ namespace PlanningPoker.Client.Connections
                             )));
                         }
                     }
+                    else
+                    {
+                        if (_onSessionCreationFailed != null)
+                        {
+                            RunInTask(() => _onSessionCreationFailed());
+                        }
+                    }
                 }
             }
             catch (InvalidOperationException ex)
