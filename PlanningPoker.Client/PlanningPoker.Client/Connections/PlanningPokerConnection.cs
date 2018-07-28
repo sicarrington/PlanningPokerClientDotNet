@@ -69,6 +69,7 @@ namespace PlanningPoker.Client.Connections
                     var typedMessage = parsedMessage as NewSessionResponse;
                     if (typedMessage.Success)
                     {
+                        _userCacheProvider.AddUser(typedMessage.SessionId, typedMessage.UserId, typedMessage.UserToken);
                         if (_onSessionCreationSucceeded != null)
                         {
                             RunInTask(() => _onSessionCreationSucceeded((

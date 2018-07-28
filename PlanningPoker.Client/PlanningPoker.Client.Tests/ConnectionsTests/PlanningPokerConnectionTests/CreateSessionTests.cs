@@ -111,7 +111,32 @@ namespace PlanningPoker.Client.Tests.ConnectionsTests.PlanningPokerConnectionTes
 
             Assert.True(callbackHappened);
         }
-        //[Fact]
-        //check user is cached ?
+        [Fact]
+        public async void GivenCreateSessionIsCalled_WhenConnectionReturnsSuccess_ThenUserIsAddedToCache()
+        {
+            var sessionId = "665330";
+            var userId = "2db90720-f234-4ec6-88d7-56eeca3be56b";
+            var userToken = "ABigToken";
+            Action<string> callbackMethod = null;
+            _pokerConnection.Setup(x => x.Initialize(It.IsAny<Action<string>>(), It.IsAny<Action>(), It.IsAny<CancellationToken>()))
+                .Callback<Action<string>, Action, CancellationToken>((success, error, cancel) => { callbackMethod = success; })
+                .Returns(Task.CompletedTask);
+            _pokerConnection.Setup(x => x.Send(It.IsAny<String>())).Returns(Task.CompletedTask);
+            _responseMessageParser.Setup(x => x.Get(It.IsAny<string>())).Returns(new NewSessionResponse(sessionId, userId, userToken));
+
+            _userCacheProvider.Setup(x => x.AddUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
+
+            await _planningPokerConnection.Start(CancellationToken.None);
+            await _planningPokerConnection.CreateSession("Fred");
+            callbackMethod($"PP 1.0\nMessageType:NewSessionResponse\nSuccess:true\nSessionId:{sessionId}\nUserId:{userId}\nToken:{userToken}");
+
+            Thread.Sleep(500);
+
+            _userCacheProvider.Verify(x => x.AddUser(
+                It.Is<string>(y => y == sessionId),
+                It.Is<string>(y => y == userId),
+                It.Is<string>(y => y == userToken)
+            ), Times.Once);
+        }
     }
 }
