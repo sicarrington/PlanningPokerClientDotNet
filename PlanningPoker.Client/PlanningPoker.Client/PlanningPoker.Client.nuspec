@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>$id$</id>
-    <version>$version$</version>
-    <title>$title$</title>
-    <authors>$author$</authors>
-    <owners>$author$</owners>
+    <id>PlanningPoker.Client</id>
+    <version>0.0.1</version>
+    <title>Planning Poker Client</title>
+    <authors>Si Carrington</authors>
+    <owners>Si Carrington</owners>
     <!-- <licenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</licenseUrl>
     <projectUrl>http://PROJECT_URL_HERE_OR_DELETE_THIS_LINE</projectUrl>
     <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl> -->
