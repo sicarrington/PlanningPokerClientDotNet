@@ -28,6 +28,8 @@ namespace PlanningPoker.Client.Connections
         private Action _onSessionCreationFailed;
         private Action _onSessionSubscribeSucceeded;
         private Action _onSessionSubscribeFailed;
+        private Action _onJoinSessionSucceeded;
+        private Action _onJoinSessionFailed;
 
         internal PlanningPokerConnection(IOptions<ConnectionSettings> connectionSettings,
             IResponseMessageParser responseMessageParser, IPokerConnection pokerConnection,
@@ -66,6 +68,18 @@ namespace PlanningPoker.Client.Connections
             }
             var userDetails = await _userCacheProvider.GetUser(sessionId, userId);
             await _pokerConnection.Send($"PP 1.0\nMessageType:SubscribeMessage\nUserId:{userId}\nSessionId:{sessionId}\nToken:{userDetails.Token}");
+        }
+        public async Task JoinSession(string sessionId, string userName)
+        {
+            if (string.IsNullOrWhiteSpace(sessionId))
+            {
+                throw new ArgumentNullException(nameof(sessionId));
+            }
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                throw new ArgumentNullException(nameof(userName));
+            }
+            await _pokerConnection.Send($"PP 1.0\nMessageType:JoinSession\nUserName:{userName}\nSessionId:{sessionId}\nIsObserver:false");
         }
 
         private void ProcessMessageFromServer(string message)
@@ -114,6 +128,25 @@ namespace PlanningPoker.Client.Connections
                         }
                     }
                 }
+                else if (parsedMessage is JoinSessionResponse)
+                {
+                    var typedMessage = parsedMessage as JoinSessionResponse;
+                    if (typedMessage.Success)
+                    {
+                        _userCacheProvider.AddUser(typedMessage.SessionId, typedMessage.UserId, typedMessage.UserToken);
+                        if (_onJoinSessionSucceeded != null)
+                        {
+                            RunInTask(() => _onJoinSessionSucceeded());
+                        }
+                    }
+                    else
+                    {
+                        if (_onJoinSessionFailed != null)
+                        {
+                            RunInTask(() => _onJoinSessionFailed());
+                        }
+                    }
+                }
             }
             catch (InvalidOperationException ex)
             {
@@ -156,6 +189,16 @@ namespace PlanningPoker.Client.Connections
         public PlanningPokerConnection OnSessionSubscribeFailed(Action sessionSubscribeFailed)
         {
             _onSessionSubscribeFailed = sessionSubscribeFailed;
+            return this;
+        }
+        public PlanningPokerConnection OnJoinSessionSucceeded(Action joinSessionSuceeded)
+        {
+            _onJoinSessionSucceeded = joinSessionSuceeded;
+            return this;
+        }
+        public PlanningPokerConnection OnJoinSessionFailed(Action joinSessionFailed)
+        {
+            _onJoinSessionFailed = joinSessionFailed;
             return this;
         }
     }
