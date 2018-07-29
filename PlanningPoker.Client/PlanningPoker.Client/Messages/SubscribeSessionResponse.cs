@@ -5,8 +5,8 @@ namespace PlanningPoker.Client.Messages
 {
     internal class SubscribeSessionResponse : ResponseMessage
     {
-        public string ErrorMessage { get; private set; }
-        public string SessionId { get; private set; }
+        public virtual string ErrorMessage { get; private set; }
+        public virtual string SessionId { get; private set; }
 
         public SubscribeSessionResponse(bool success, string sessionId, string errorMessage = null) : base(success)
         {

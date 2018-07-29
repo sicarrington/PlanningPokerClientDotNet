@@ -24,7 +24,7 @@ namespace PlanningPoker.Client.Connections
 
         private Action<Exception> _onError;
         private Action _onDisconnected;
-        private Action<(string sessionId, string userId, string userToken)> _onSessionCreationSucceeded;
+        private Action<(string sessionId, string userId)> _onSessionCreationSucceeded;
         private Action _onSessionCreationFailed;
         private Action _onSessionSubscribeSucceeded;
         private Action _onSessionSubscribeFailed;
@@ -84,8 +84,7 @@ namespace PlanningPoker.Client.Connections
                         {
                             RunInTask(() => _onSessionCreationSucceeded((
                                 typedMessage.SessionId,
-                                typedMessage.UserId,
-                                typedMessage.UserToken
+                                typedMessage.UserId
                             )));
                         }
                     }
@@ -134,7 +133,7 @@ namespace PlanningPoker.Client.Connections
             _onError = onError;
             return this;
         }
-        public PlanningPokerConnection OnSessionSuccesfullyCreated(Action<(string sessionId, string userId, string userToken)> onSessionSuccesfullyCreated)
+        public PlanningPokerConnection OnSessionSuccesfullyCreated(Action<(string sessionId, string userId)> onSessionSuccesfullyCreated)
         {
             _onSessionCreationSucceeded = onSessionSuccesfullyCreated;
             return this;
