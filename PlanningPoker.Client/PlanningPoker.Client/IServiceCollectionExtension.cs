@@ -21,6 +21,7 @@ namespace PlanningPoker.Client
             var responseMessageFactories = new List<IResponseMessageFactory>();
             responseMessageFactories.Add(new NewSessionResponseMessageFactory(messageParser));
             responseMessageFactories.Add(new SubscribeSessionResponseMessageFactory(messageParser));
+            responseMessageFactories.Add(new JoinSessionResponseMessageFactory(messageParser));
 
             var responseMessageParser = new ResponseMessageParser(messageParser, responseMessageFactories);
             services.AddSingleton(typeof(IResponseMessageParser), responseMessageParser);

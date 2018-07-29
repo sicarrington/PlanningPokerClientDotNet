@@ -20,6 +20,7 @@ namespace PlanningPoker.Client.Tests.MessageFactoriesTests.ResponseMessageParser
             var responseMessageFactories = new List<IResponseMessageFactory>();
             responseMessageFactories.Add(new NewSessionResponseMessageFactory(_messageParser));
             responseMessageFactories.Add(new SubscribeSessionResponseMessageFactory(_messageParser));
+            responseMessageFactories.Add(new JoinSessionResponseMessageFactory(_messageParser));
 
             _responseMessageFactory = new ResponseMessageParser(_messageParser, responseMessageFactories);
         }
@@ -68,6 +69,13 @@ namespace PlanningPoker.Client.Tests.MessageFactoriesTests.ResponseMessageParser
             var result = _responseMessageFactory.Get($"PP 1.0\nMessageType:SubscribeSessionResponse\nSuccess:true\nSessionId:12345\n");
 
             Assert.IsType<SubscribeSessionResponse>(result);
+        }
+        [Fact]
+        public void GivenGetIsCalled_WhenMessageTypeIsJoinSessionResponse_ThenNewSessionResponseMessageIsReturned()
+        {
+            var result = _responseMessageFactory.Get($"PP 1.0\nMessageType:JoinSessionResponse\nSuccess:true\nSessionId:12345\nUserId:72635\nUserToken:8934848\n");
+
+            Assert.IsType<JoinSessionResponse>(result);
         }
     }
 }
