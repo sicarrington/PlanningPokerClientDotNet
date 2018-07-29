@@ -1,5 +1,7 @@
 # Planning Poker dotnet Client Library
 
+[See the planning poker site here](https://scrumplanningpoker.azurewebsites.net)
+
 ## Example Usage
 
 Use ```AddPlanningPokerClient()``` method to add dependencies into DI container:
