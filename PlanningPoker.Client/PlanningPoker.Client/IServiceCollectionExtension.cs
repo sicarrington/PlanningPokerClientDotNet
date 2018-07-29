@@ -20,6 +20,7 @@ namespace PlanningPoker.Client
         private static IServiceCollection AddResponseMessageFactories(IServiceCollection services)
         {
             services.AddSingleton<IResponseMessageFactory, NewSessionResponseMessageFactory>();
+            services.AddSingleton<IResponseMessageFactory, SubscribeSessionResponseMessageFactory>();
             return services;
         }
     }

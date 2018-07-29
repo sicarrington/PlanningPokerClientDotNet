@@ -27,8 +27,9 @@ namespace PlanningPoker.Client.MessageFactories
             switch (messageType)
             {
                 case ResponseMessageType.NewSessionResponse:
-                    var factory = GetFactory(typeof(NewSessionResponseMessageFactory));
-                    return factory.Get(message);
+                    return GetFactory(typeof(NewSessionResponseMessageFactory)).Get(message);
+                case ResponseMessageType.SubscribeSessionResponse:
+                    return GetFactory(typeof(SubscribeSessionResponseMessageFactory)).Get(message);
                 default:
                     throw new InvalidOperationException($"Message type {messageType} is not supported");
             }

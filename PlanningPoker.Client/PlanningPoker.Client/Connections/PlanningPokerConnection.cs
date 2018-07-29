@@ -26,6 +26,8 @@ namespace PlanningPoker.Client.Connections
         private Action _onDisconnected;
         private Action<(string sessionId, string userId, string userToken)> _onSessionCreationSucceeded;
         private Action _onSessionCreationFailed;
+        private Action _onSessionSubscribeSucceeded;
+        private Action _onSessionSubscribeFailed;
 
         internal PlanningPokerConnection(IOptions<ConnectionSettings> connectionSettings,
             IResponseMessageParser responseMessageParser, IPokerConnection pokerConnection,
@@ -54,8 +56,16 @@ namespace PlanningPoker.Client.Connections
 
         public async Task SubscribeSession(string userId, string sessionId)
         {
-            // await _pokerConnection.Send("PP 1.0\nMessageType:SubscribeMessage\nUserId:" +
-            //     userId + "\nSessionId:" + sessionId + "\nToken:" + user_info.token);
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                throw new ArgumentNullException(nameof(userId));
+            }
+            if (string.IsNullOrWhiteSpace(sessionId))
+            {
+                throw new ArgumentNullException(nameof(sessionId));
+            }
+            var userDetails = await _userCacheProvider.GetUser(sessionId, userId);
+            await _pokerConnection.Send($"PP 1.0\nMessageType:SubscribeMessage\nUserId:{userId}\nSessionId:{sessionId}\nToken:{userDetails.Token}");
         }
 
         private void ProcessMessageFromServer(string message)
@@ -84,6 +94,24 @@ namespace PlanningPoker.Client.Connections
                         if (_onSessionCreationFailed != null)
                         {
                             RunInTask(() => _onSessionCreationFailed());
+                        }
+                    }
+                }
+                else if (parsedMessage is SubscribeSessionResponse)
+                {
+                    var typedMessage = parsedMessage as SubscribeSessionResponse;
+                    if (typedMessage.Success)
+                    {
+                        if (_onSessionSubscribeSucceeded != null)
+                        {
+                            RunInTask(() => _onSessionSubscribeSucceeded());
+                        }
+                    }
+                    else
+                    {
+                        if (_onSessionSubscribeFailed != null)
+                        {
+                            RunInTask(() => _onSessionSubscribeFailed());
                         }
                     }
                 }
@@ -119,6 +147,16 @@ namespace PlanningPoker.Client.Connections
         public PlanningPokerConnection OnDisconnected(Action onDisconnected)
         {
             _onDisconnected = onDisconnected;
+            return this;
+        }
+        public PlanningPokerConnection OnSessionSubscribeSucceeded(Action sessionSubscribeSucceeded)
+        {
+            _onSessionSubscribeSucceeded = sessionSubscribeSucceeded;
+            return this;
+        }
+        public PlanningPokerConnection OnSessionSubscribeFailed(Action sessionSubscribeFailed)
+        {
+            _onSessionSubscribeFailed = sessionSubscribeFailed;
             return this;
         }
     }
