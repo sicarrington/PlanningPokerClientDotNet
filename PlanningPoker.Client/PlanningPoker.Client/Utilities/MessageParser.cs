@@ -7,6 +7,10 @@ namespace PlanningPoker.Client.Utilities
 {
     internal class MessageParser
     {
+        public MessageParser()
+        {
+
+        }
         public virtual string GetFieldFromMessage(string message, string fieldName)
         {
             if (string.IsNullOrWhiteSpace(message))
