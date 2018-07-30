@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using System.Net.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using PlanningPoker.Client.Connections;
 using PlanningPoker.Client.MessageFactories;
+using PlanningPoker.Client.Services;
 using PlanningPoker.Client.Utilities;
 
 namespace PlanningPoker.Client
@@ -36,6 +38,11 @@ namespace PlanningPoker.Client
                 responseMessageParser, planningPokerSocket, userCacheProvider);
             services.AddSingleton(typeof(PlanningConnectionFactory), planningPokerConnectionFactory);
             services = AddResponseMessageFactories(services);
+
+            var httpClient = new HttpClient();
+            services.AddSingleton(typeof(HttpClient), httpClient);
+            var planningPokerApiService = new PlanningPokerApiService(httpClient, connectionSettingsOptions);
+            services.AddSingleton(typeof(IPlanningPokerService), planningPokerApiService);
 
             return services;
         }

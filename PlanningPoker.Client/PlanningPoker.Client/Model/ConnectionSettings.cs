@@ -6,6 +6,7 @@ namespace PlanningPoker.Client
     {
         public virtual Uri PlanningSocketUri { get; set; }
         public virtual Uri PlanningApiUri { get; set; }
+        public virtual string ApiKey { get; set; }
 
         public ConnectionSettings()
         {
