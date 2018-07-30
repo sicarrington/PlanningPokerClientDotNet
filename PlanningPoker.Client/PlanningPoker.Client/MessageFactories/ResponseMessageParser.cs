@@ -32,6 +32,8 @@ namespace PlanningPoker.Client.MessageFactories
                     return GetFactory(typeof(SubscribeSessionResponseMessageFactory)).Get(message);
                 case ResponseMessageType.JoinSessionResponse:
                     return GetFactory(typeof(JoinSessionResponseMessageFactory)).Get(message);
+                case ResponseMessageType.RefreshSession:
+                    return GetFactory(typeof(RefreshSessionMessageFactory)).Get(message);
                 default:
                     throw new InvalidOperationException($"Message type {messageType} is not supported");
             }

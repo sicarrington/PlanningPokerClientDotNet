@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using PlanningPoker.Client.Connections;
 using PlanningPoker.Client.MessageFactories;
+using PlanningPoker.Client.Services;
 using PlanningPoker.Client.Utilities;
 using Xunit;
 
@@ -34,8 +35,9 @@ namespace PlanningPoker.Client.Tests
             var responseMessageParser = serviceProvider.GetService<IResponseMessageParser>();
             var pokerConnection = serviceProvider.GetService<IPokerConnection>();
             var userCacheProvider = serviceProvider.GetService<UserCacheProvider>();
+            var planningPokerService = serviceProvider.GetService<IPlanningPokerService>();
 
-            var planningConnection = new PlanningPokerConnection(optionsMock.Object, responseMessageParser, pokerConnection, userCacheProvider);
+            var planningConnection = new PlanningPokerConnection(optionsMock.Object, responseMessageParser, pokerConnection, userCacheProvider, planningPokerService);
             await planningConnection.Start(CancellationToken.None);
             await planningConnection.CreateSession("Simon");
 

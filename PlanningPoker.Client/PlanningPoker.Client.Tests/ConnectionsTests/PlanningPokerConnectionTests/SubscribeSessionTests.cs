@@ -12,6 +12,7 @@ using PlanningPoker.Client.Exceptions;
 using PlanningPoker.Client.MessageFactories;
 using PlanningPoker.Client.Messages;
 using PlanningPoker.Client.Model;
+using PlanningPoker.Client.Services;
 using PlanningPoker.Client.Utilities;
 using Xunit;
 
@@ -25,6 +26,7 @@ namespace PlanningPoker.Client.Tests.ConnectionsTests
         private Mock<IPokerConnection> _pokerConnection;
         private Mock<UserCacheProvider> _userCacheProvider;
         private PlanningPokerConnection _planningPokerConnection;
+        private Mock<IPlanningPokerService> _planningPokerService;
         public SubscribeSessionTests()
         {
             _connectionSettings = new Mock<ConnectionSettings>();
@@ -33,9 +35,10 @@ namespace PlanningPoker.Client.Tests.ConnectionsTests
             _responseMessageParser = new Mock<IResponseMessageParser>();
             _pokerConnection = new Mock<IPokerConnection>();
             _userCacheProvider = new Mock<UserCacheProvider>();
+            _planningPokerService = new Mock<IPlanningPokerService>();
 
             _planningPokerConnection = new PlanningPokerConnection(_options.Object, _responseMessageParser.Object,
-                _pokerConnection.Object, _userCacheProvider.Object);
+                _pokerConnection.Object, _userCacheProvider.Object, _planningPokerService.Object);
         }
         [Fact]
         public async void GivenSubscribeSessionIsCalled_WhenUserIdPassedIsNull_ThenExceptionIsThrown()

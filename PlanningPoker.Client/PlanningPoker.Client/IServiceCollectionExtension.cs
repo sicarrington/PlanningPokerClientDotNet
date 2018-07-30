@@ -24,6 +24,7 @@ namespace PlanningPoker.Client
             responseMessageFactories.Add(new NewSessionResponseMessageFactory(messageParser));
             responseMessageFactories.Add(new SubscribeSessionResponseMessageFactory(messageParser));
             responseMessageFactories.Add(new JoinSessionResponseMessageFactory(messageParser));
+            responseMessageFactories.Add(new RefreshSessionMessageFactory(messageParser));
 
             var responseMessageParser = new ResponseMessageParser(messageParser, responseMessageFactories);
             services.AddSingleton(typeof(IResponseMessageParser), responseMessageParser);
@@ -34,15 +35,17 @@ namespace PlanningPoker.Client
             var userCacheProvider = new UserCacheProvider();
             services.AddSingleton(typeof(UserCacheProvider), userCacheProvider);
 
-            var planningPokerConnectionFactory = new PlanningConnectionFactory(connectionSettingsOptions,
-                responseMessageParser, planningPokerSocket, userCacheProvider);
-            services.AddSingleton(typeof(PlanningConnectionFactory), planningPokerConnectionFactory);
-            services = AddResponseMessageFactories(services);
-
             var httpClient = new HttpClient();
             services.AddSingleton(typeof(HttpClient), httpClient);
             var planningPokerApiService = new PlanningPokerApiService(httpClient, connectionSettingsOptions);
             services.AddSingleton(typeof(IPlanningPokerService), planningPokerApiService);
+
+            var planningPokerConnectionFactory = new PlanningConnectionFactory(connectionSettingsOptions,
+                responseMessageParser, planningPokerSocket, userCacheProvider, planningPokerApiService);
+            services.AddSingleton(typeof(PlanningConnectionFactory), planningPokerConnectionFactory);
+            services = AddResponseMessageFactories(services);
+
+
 
             return services;
         }

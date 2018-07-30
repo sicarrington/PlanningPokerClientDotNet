@@ -59,7 +59,7 @@ namespace PlanningPoker.Client.Utilities
             }
             return Task.CompletedTask;
         }
-        internal Task UpdateUser(string sessionId, string userId, string token, string userName, bool isHost, bool isObserver)
+        internal virtual Task UpdateUser(string sessionId, string userId, string token, string userName, bool isHost, bool isObserver)
         {
             if (string.IsNullOrWhiteSpace(sessionId))
             {

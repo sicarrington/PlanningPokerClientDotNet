@@ -8,6 +8,7 @@ using PlanningPoker.Client.Exceptions;
 using PlanningPoker.Client.MessageFactories;
 using PlanningPoker.Client.Messages;
 using PlanningPoker.Client.Model;
+using PlanningPoker.Client.Services;
 using PlanningPoker.Client.Utilities;
 using Xunit;
 
@@ -21,6 +22,7 @@ namespace PlanningPoker.Client.Tests.ConnectionsTests.PlanningPokerConnectionTes
         private Mock<IPokerConnection> _pokerConnection;
         private Mock<UserCacheProvider> _userCacheProvider;
         private PlanningPokerConnection _planningPokerConnection;
+        private Mock<IPlanningPokerService> _planningPokerService;
         public JoinSessionTests()
         {
             _connectionSettings = new Mock<ConnectionSettings>();
@@ -29,9 +31,10 @@ namespace PlanningPoker.Client.Tests.ConnectionsTests.PlanningPokerConnectionTes
             _responseMessageParser = new Mock<IResponseMessageParser>();
             _pokerConnection = new Mock<IPokerConnection>();
             _userCacheProvider = new Mock<UserCacheProvider>();
+            _planningPokerService = new Mock<IPlanningPokerService>();
 
             _planningPokerConnection = new PlanningPokerConnection(_options.Object, _responseMessageParser.Object,
-                _pokerConnection.Object, _userCacheProvider.Object);
+                _pokerConnection.Object, _userCacheProvider.Object, _planningPokerService.Object);
         }
         [Fact]
         public async void GivenJoinSessionIsCalled_WhenSessionIdIsNull_ThenExceptinoIsThrown()
@@ -150,7 +153,7 @@ namespace PlanningPoker.Client.Tests.ConnectionsTests.PlanningPokerConnectionTes
             _pokerConnection.Setup(x => x.Send(It.IsAny<String>())).Returns(Task.CompletedTask);
             _responseMessageParser.Setup(x => x.Get(It.IsAny<string>())).Returns(new JoinSessionResponse(sessionId, userId, userToken));
 
-            _userCacheProvider.Setup(x => x.AddUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
+            _userCacheProvider.Setup(x => x.AddUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(Task.CompletedTask);
 
             await _planningPokerConnection.Start(CancellationToken.None);
             await _planningPokerConnection.CreateSession("Fred");
