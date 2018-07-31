@@ -23,6 +23,10 @@ namespace PlanningPoker.Client.Tests.ConnectionsTests.PlanningPokerConnectionTes
         private Mock<UserCacheProvider> _userCacheProvider;
         private PlanningPokerConnection _planningPokerConnection;
         private Mock<IPlanningPokerService> _planningPokerService;
+
+        string _expectedSessionId = "12345";
+        Action<string> _callbackMethod = null;
+
         public OnSessionInformationUpdatedTests()
         {
             _connectionSettings = new Mock<ConnectionSettings>();
@@ -35,110 +39,97 @@ namespace PlanningPoker.Client.Tests.ConnectionsTests.PlanningPokerConnectionTes
 
             _planningPokerConnection = new PlanningPokerConnection(_options.Object, _responseMessageParser.Object,
                 _pokerConnection.Object, _userCacheProvider.Object, _planningPokerService.Object);
+
+            _responseMessageParser.Setup(x => x.Get(It.IsAny<string>())).Returns(new RefreshSessionResponse(_expectedSessionId));
+
+            _pokerConnection.Setup(x => x.Initialize(It.IsAny<Action<string>>(), It.IsAny<Action>(), It.IsAny<CancellationToken>()))
+                .Callback<Action<string>, Action, CancellationToken>((success, error, cancel) => { _callbackMethod = success; })
+                .Returns(Task.CompletedTask);
         }
         [Fact]
         public async void GivenConnectedSession_WhenConnectionRaisesRefreshEvent_ThenSessioninformationIsRetrievedUsingSessionService()
         {
-            var sessionId = "12345";
-            Action<string> callbackMethod = null;
-            _pokerConnection.Setup(x => x.Initialize(It.IsAny<Action<string>>(), It.IsAny<Action>(), It.IsAny<CancellationToken>()))
-                .Callback<Action<string>, Action, CancellationToken>((success, error, cancel) => { callbackMethod = success; })
-                .Returns(Task.CompletedTask);
-
-            _responseMessageParser.Setup(x => x.Get(It.IsAny<string>())).Returns(new RefreshSessionResponse(sessionId));
             _planningPokerConnection.OnSessionInformationUpdated((pokerSession) =>
-            {
-
-            });
-            _planningPokerService.Setup(x => x.GetSessionDetails(sessionId)).Returns(Task.FromResult(new PokerSession()
-            {
-
-            }));
+               { });
+            _planningPokerService.Setup(x => x.GetSessionDetails(_expectedSessionId)).Returns(Task.FromResult(new PokerSession()
+            { }));
 
             await _planningPokerConnection.Start(CancellationToken.None);
-            callbackMethod($"PP 1.0\nMessageType:RefreshSession\nSuccess:true\nSessionId:{sessionId}");
+            _callbackMethod($"PP 1.0\nMessageType:RefreshSession\nSuccess:true\nSessionId:{_expectedSessionId}");
 
             Thread.Sleep(500);
 
-            _planningPokerService.Verify(x => x.GetSessionDetails(It.Is<string>(y => y == sessionId)), Times.Once);
+            _planningPokerService.Verify(x => x.GetSessionDetails(It.Is<string>(y => y == _expectedSessionId)), Times.Once);
         }
-        // [Fact]
-        // public async void GivenConnectedSession_WhenConnectionRaisesRefreshEvent_ThenUserCacheIsUpdatedWithUserDetails()
-        // {
-        //     var sessionId = "12345";
-        //     var userId = "918173748";
-        //     var userToken = "AToken";
-        //     var userName = "AUsser";
-        //     var isHost = true;
-        //     var isObserver = true;
-        //     Action<string> callbackMethod = null;
-        //     _pokerConnection.Setup(x => x.Initialize(It.IsAny<Action<string>>(), It.IsAny<Action>(), It.IsAny<CancellationToken>()))
-        //         .Callback<Action<string>, Action, CancellationToken>((success, error, cancel) => { callbackMethod = success; })
-        //         .Returns(Task.CompletedTask);
+        [Fact]
+        public async void GivenConnectedSession_WhenConnectionRaisesRefreshEvent_ThenUserCacheIsUpdatedWithUserDetails()
+        {
+            var userId = "918173748";
+            var userToken = "AToken";
+            var userName = "AUsser";
+            var isHost = true;
+            var isObserver = true;
 
-        //     _userCacheProvider.Setup(x => x.GetUser(sessionId, userId)).Returns(Task.FromResult(new UserCacheItem
-        //     {
-        //         UserId = userId,
-        //         SessionId = sessionId
-        //     }));
-        //     _userCacheProvider.Setup(x => x.UpdateUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
-        //         It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>())).Returns(Task.CompletedTask);
+            _userCacheProvider.Setup(x => x.GetUser(_expectedSessionId, userId)).Returns(Task.FromResult(new UserCacheItem
+            {
+                UserId = userId,
+                SessionId = _expectedSessionId,
+                Token = userToken
+            }));
+            _userCacheProvider.Setup(x => x.UpdateUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+                It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>())).Returns(Task.CompletedTask);
 
-        //     _responseMessageParser.Setup(x => x.Get(It.IsAny<string>())).Returns(new RefreshSessionResponse(sessionId));
-        //     _planningPokerConnection.OnSessionInformationUpdated((pokerSession) =>
-        //     {
+            _planningPokerConnection.OnSessionInformationUpdated((pokerSession) =>
+            {
+            });
 
-        //     });
-        //     var pokerSessionUsers = new List<PokerSessionUser>();
-        //     pokerSessionUsers.Add(new PokerSessionUser
-        //     {
-        //         Id = userId,
-        //         SessionId = sessionId,
-        //         Name = userName,
-        //         IsHost = isHost,
-        //         IsObserver = isObserver
-        //     });
-        //     _planningPokerService.Setup(x => x.GetSessionDetails(sessionId)).Returns(Task.FromResult(new PokerSession()
-        //     {
-        //         Participants = pokerSessionUsers
-        //     }));
+            var pokerSessionUsers = new List<PokerSessionUser>();
+            pokerSessionUsers.Add(new PokerSessionUser
+            {
+                Id = userId,
+                SessionId = _expectedSessionId,
+                Name = userName,
+                IsHost = isHost,
+                IsObserver = isObserver
+            });
+            _planningPokerService.Setup(x => x.GetSessionDetails(_expectedSessionId)).Returns(Task.FromResult(new PokerSession()
+            {
+                SessionId = _expectedSessionId,
+                Participants = pokerSessionUsers
+            }));
 
-        //     await _planningPokerConnection.Start(CancellationToken.None);
-        //     callbackMethod($"PP 1.0\nMessageType:RefreshSession\nSuccess:true\nSessionId:{sessionId}");
+            await _planningPokerConnection.Start(CancellationToken.None);
+            _callbackMethod($"PP 1.0\nMessageType:RefreshSession\nSuccess:true\nSessionId:{_expectedSessionId}");
 
-        //     Thread.Sleep(500);
+            Thread.Sleep(500);
 
-        //     _userCacheProvider.Verify(x => x.UpdateUser(
-        //         It.Is<string>(y => y == sessionId),
-        //         It.Is<string>(y => y == userId),
-        //         It.Is<string>(y => y == userToken),
-        //         It.Is<string>(y => y == userName),
-        //         It.Is<bool>(y => y == isHost),
-        //         It.Is<bool>(y => y == isObserver)), Times.Once);
-        // }
+            _userCacheProvider.Verify(x => x.UpdateUser(
+                It.Is<string>(y => y == _expectedSessionId),
+                It.Is<string>(y => y == userId),
+                It.Is<string>(y => y == userToken),
+                It.Is<string>(y => y == userName),
+                It.Is<bool>(y => y == isHost),
+                It.Is<bool>(y => y == isObserver)), Times.Once);
+        }
         [Fact]
         public async void GivenConnectedSession_WhenConnectionRaisesRefreshEvent_ThenNewSessionInformationIsRaised()
         {
-            var sessionId = "12345";
             var callbackHappened = false;
 
-            Action<string> callbackMethod = null;
-            _pokerConnection.Setup(x => x.Initialize(It.IsAny<Action<string>>(), It.IsAny<Action>(), It.IsAny<CancellationToken>()))
-                .Callback<Action<string>, Action, CancellationToken>((success, error, cancel) => { callbackMethod = success; })
-                .Returns(Task.CompletedTask);
+            _userCacheProvider.Setup(x => x.UpdateUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+                It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>())).Returns(Task.CompletedTask);
 
-            _responseMessageParser.Setup(x => x.Get(It.IsAny<string>())).Returns(new RefreshSessionResponse(sessionId));
             _planningPokerConnection.OnSessionInformationUpdated((pokerSession) =>
             {
                 callbackHappened = true;
             });
-            _planningPokerService.Setup(x => x.GetSessionDetails(sessionId)).Returns(Task.FromResult(new PokerSession()
+            _planningPokerService.Setup(x => x.GetSessionDetails(_expectedSessionId)).Returns(Task.FromResult(new PokerSession()
             {
 
             }));
 
             await _planningPokerConnection.Start(CancellationToken.None);
-            callbackMethod($"PP 1.0\nMessageType:RefreshSession\nSuccess:true\nSessionId:{sessionId}");
+            _callbackMethod($"PP 1.0\nMessageType:RefreshSession\nSuccess:true\nSessionId:{_expectedSessionId}");
 
             Thread.Sleep(500);
 

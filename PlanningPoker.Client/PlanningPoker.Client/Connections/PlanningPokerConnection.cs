@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.WebSockets;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using PlanningPoker.Client.Connections;
+using PlanningPoker.Client.Exceptions;
 using PlanningPoker.Client.MessageFactories;
 using PlanningPoker.Client.Messages;
 using PlanningPoker.Client.Model;
@@ -156,6 +157,7 @@ namespace PlanningPoker.Client.Connections
                     var typedMessage = parsedMessage as RefreshSessionResponse;
                     var sessionInformation = await _planningPokerService.GetSessionDetails(typedMessage.SessionId);
 
+                    await UpdateCachedUserDetails(sessionInformation);
 
                     if (_onSessionInformationUpdated != null)
                     {
@@ -169,6 +171,25 @@ namespace PlanningPoker.Client.Connections
                 if (_onError != null)
                 {
                     RunInTask(() => _onError(ex));
+                }
+            }
+        }
+        private async Task UpdateCachedUserDetails(PokerSession sessionInformation)
+        {
+            if (sessionInformation?.Participants != null)
+            {
+                foreach (var sessionUser in sessionInformation.Participants)
+                {
+                    try
+                    {
+                        var cachedUser = await _userCacheProvider.GetUser(sessionInformation.SessionId, sessionUser.Id);
+                        await _userCacheProvider.UpdateUser(sessionInformation.SessionId, sessionUser.Id, cachedUser.Token,
+                            sessionUser.Name, sessionUser.IsHost, sessionUser.IsObserver);
+                    }
+                    catch (NotFoundException e)
+                    {
+                        //User is not in cache, we don't want to update
+                    }
                 }
             }
         }

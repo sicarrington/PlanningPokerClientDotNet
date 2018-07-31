@@ -14,7 +14,7 @@ namespace PlanningPoker.Client.Utilities
         {
             _userCache = new ConcurrentDictionary<string, UserCacheItem>();
         }
-        internal virtual Task<UserCacheItem> GetUser(string sessionId, string userId)
+        internal virtual Task<UserCacheItem>    GetUser(string sessionId, string userId)
         {
             if (string.IsNullOrWhiteSpace(sessionId))
             {
