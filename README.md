@@ -2,6 +2,8 @@
 
 [See the planning poker site here](https://scrumplanningpoker.azurewebsites.net)
 
+[See the nuget pacakge](https://www.nuget.org/packages/PlanningPoker.Client)
+
 ## Example Usage
 
 Use ```AddPlanningPokerClient()``` method to add dependencies into DI container:

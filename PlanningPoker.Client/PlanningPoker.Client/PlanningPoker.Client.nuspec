@@ -1,18 +1,13 @@
 <?xml version="1.0"?>
-<package >
-  <metadata>
+<package xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <id>PlanningPoker.Client</id>
     <version>0.0.1</version>
-    <title>Planning Poker Client</title>
-    <authors>Si Carrington</authors>
-    <owners>Si Carrington</owners>
-    <!-- <licenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</licenseUrl>
-    <projectUrl>http://PROJECT_URL_HERE_OR_DELETE_THIS_LINE</projectUrl>
-    <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl> -->
+    <authors>Simon Carrington</authors>
+    <owners>Simon Carrington</owners>
+    <projectUrl>https://github.com/sicarrington/PlanningPokerClientDotNet</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Planning poker dotnet client</description>
-    <!-- <releaseNotes>Summary of changes made in this release of the package.</releaseNotes> -->
-    <copyright>Copyright Simon Carrington 2018</copyright>
-    <!-- <tags>Tag1 Tag2</tags> -->
+    <description>Dotnet core client library for planning poker</description>
+    <tags>planningpoker agile</tags>
   </metadata>
 </package>
