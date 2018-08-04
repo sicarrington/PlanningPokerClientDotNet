@@ -15,7 +15,7 @@ namespace PlanningPoker.Client.Tests
 {
     public class IntegrationTests
     {
-        [Fact]
+        //[Fact]
         public async void Test1()
         {
             // var connectionSettings = new PokerConnectionSettings
