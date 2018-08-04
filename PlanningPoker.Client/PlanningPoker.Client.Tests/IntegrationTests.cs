@@ -15,29 +15,38 @@ namespace PlanningPoker.Client.Tests
 {
     public class IntegrationTests
     {
-        //[Fact]
+        [Fact]
         public async void Test1()
         {
-            var connectionSettings = new ConnectionSettings
-            {
-                PlanningSocketUri = new Uri("wss://planningpokercore.azurewebsites.net/ws"),
-                PlanningApiUri = new Uri("https://sicarringtonplanningpokerapinew.azurewebsites.net/api")
-            };
-            var optionsMock = new Mock<IOptions<ConnectionSettings>>();
-            optionsMock.Setup(x => x.Value).Returns(connectionSettings);
+            // var connectionSettings = new PokerConnectionSettings
+            // {
+            //     PlanningSocketUri = new Uri("wss://planningpokercore.azurewebsites.net/ws"),
+            //     PlanningApiUri = new Uri("https://sicarringtonplanningpokerapinew.azurewebsites.net/api")
+            // };
+            // var optionsMock = new Mock<IOptions<PokerConnectionSettings>>();
+            // optionsMock.Setup(x => x.Value).Returns(connectionSettings);
+
+
+            var builder = new ConfigurationBuilder()
+                //.SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            //.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+            // .AddEnvironmentVariables();
+            var Configuration = builder.Build();
 
 
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddOptions();
 
-            serviceCollection.AddPlanningPokerClient();
+            serviceCollection.AddPlanningPokerClient(Configuration);
             var serviceProvider = serviceCollection.BuildServiceProvider();
+            var connectionSettings = serviceProvider.GetService<IOptions<PokerConnectionSettings>>();
             var responseMessageParser = serviceProvider.GetService<IResponseMessageParser>();
             var pokerConnection = serviceProvider.GetService<IPokerConnection>();
             var userCacheProvider = serviceProvider.GetService<UserCacheProvider>();
             var planningPokerService = serviceProvider.GetService<IPlanningPokerService>();
 
-            var planningConnection = new PlanningPokerConnection(optionsMock.Object, responseMessageParser, pokerConnection, userCacheProvider, planningPokerService);
+            var planningConnection = new PlanningPokerConnection(connectionSettings, responseMessageParser, pokerConnection, userCacheProvider, planningPokerService);
             await planningConnection.Start(CancellationToken.None);
             await planningConnection.CreateSession("Simon");
 

@@ -43,3 +43,12 @@ Start the connection by calling the ```Start()``` method.
         //error creating session
     }
 ```
+
+Adding settings:
+```json
+"PokerConnectionSettings":{
+        "PlanningSocketUri":"https://sicarringtonplanningpokerapinew.azurewebsites.net/api",
+        "PlanningApiUri":"wss://planningpokercore.azurewebsites.net/ws",
+        "ApiKey":"12345"
+}
+```

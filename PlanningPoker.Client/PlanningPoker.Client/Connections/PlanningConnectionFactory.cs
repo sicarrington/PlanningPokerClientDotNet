@@ -7,12 +7,12 @@ namespace PlanningPoker.Client.Connections
 {
     public sealed class PlanningConnectionFactory
     {
-        private IOptions<ConnectionSettings> _connectionSettings;
+        private IOptions<PokerConnectionSettings> _connectionSettings;
         private IResponseMessageParser _responseMessageParser;
         private IPokerConnection _pokerConnection;
         private UserCacheProvider _userCacheProvider;
         private IPlanningPokerService _planningPokerService;
-        internal PlanningConnectionFactory(IOptions<ConnectionSettings> connectionSettings,
+        internal PlanningConnectionFactory(IOptions<PokerConnectionSettings> connectionSettings,
             IResponseMessageParser responseMessageParser, IPokerConnection pokerConnection,
             UserCacheProvider userCacheProvider, IPlanningPokerService planningPokerService)
         {

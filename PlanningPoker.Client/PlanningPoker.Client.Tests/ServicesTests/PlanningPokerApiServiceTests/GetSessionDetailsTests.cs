@@ -12,8 +12,8 @@ namespace PlanningPoker.Client.Tests.ServicesTests.PlanningPokerApiServiceTests
 {
     public class GetSessionDetailsTests
     {
-        private Mock<IOptions<ConnectionSettings>> _options;
-        private Mock<ConnectionSettings> _connectionSettings;
+        private Mock<IOptions<PokerConnectionSettings>> _options;
+        private Mock<PokerConnectionSettings> _connectionSettings;
         private Mock<FakeHttpMessageHandler> _fakeHttpMessageHandler;
         private HttpClient _httpClient;
         private PlanningPokerApiService _planningPokerApiService;
@@ -22,10 +22,10 @@ namespace PlanningPoker.Client.Tests.ServicesTests.PlanningPokerApiServiceTests
 
         public GetSessionDetailsTests()
         {
-            _connectionSettings = new Mock<ConnectionSettings>();
+            _connectionSettings = new Mock<PokerConnectionSettings>();
             _connectionSettings.Setup(x => x.PlanningApiUri).Returns(new Uri(_serviceUri));
             _connectionSettings.Setup(x => x.ApiKey).Returns(_apiKey);
-            _options = new Mock<IOptions<ConnectionSettings>>();
+            _options = new Mock<IOptions<PokerConnectionSettings>>();
             _options.Setup(x => x.Value).Returns(_connectionSettings.Object);
             _fakeHttpMessageHandler = new Mock<FakeHttpMessageHandler> { CallBase = true };
             _httpClient = new HttpClient(_fakeHttpMessageHandler.Object);

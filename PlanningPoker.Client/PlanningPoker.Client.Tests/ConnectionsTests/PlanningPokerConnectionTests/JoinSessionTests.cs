@@ -16,8 +16,8 @@ namespace PlanningPoker.Client.Tests.ConnectionsTests.PlanningPokerConnectionTes
 {
     public class JoinSessionTests
     {
-        private Mock<IOptions<ConnectionSettings>> _options;
-        private Mock<ConnectionSettings> _connectionSettings;
+        private Mock<IOptions<PokerConnectionSettings>> _options;
+        private Mock<PokerConnectionSettings> _connectionSettings;
         private Mock<IResponseMessageParser> _responseMessageParser;
         private Mock<IPokerConnection> _pokerConnection;
         private Mock<UserCacheProvider> _userCacheProvider;
@@ -25,8 +25,8 @@ namespace PlanningPoker.Client.Tests.ConnectionsTests.PlanningPokerConnectionTes
         private Mock<IPlanningPokerService> _planningPokerService;
         public JoinSessionTests()
         {
-            _connectionSettings = new Mock<ConnectionSettings>();
-            _options = new Mock<IOptions<ConnectionSettings>>();
+            _connectionSettings = new Mock<PokerConnectionSettings>();
+            _options = new Mock<IOptions<PokerConnectionSettings>>();
             _options.Setup(x => x.Value).Returns(_connectionSettings.Object);
             _responseMessageParser = new Mock<IResponseMessageParser>();
             _pokerConnection = new Mock<IPokerConnection>();

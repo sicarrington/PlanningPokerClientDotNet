@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Net.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using PlanningPoker.Client.Connections;
@@ -11,10 +12,15 @@ namespace PlanningPoker.Client
 {
     public static class IServiceCollectionExtension
     {
-        public static IServiceCollection AddPlanningPokerClient(this IServiceCollection services)
+        public static IServiceCollection AddPlanningPokerClient(this IServiceCollection services, IConfigurationRoot configueration)
         {
-            var connectionSettings = new ConnectionSettings();
-            services.AddSingleton(typeof(ConnectionSettings), connectionSettings);
+            services.Configure<PokerConnectionSettings>(options => configueration.GetSection("PokerConnectionSettings").Bind(options));
+
+            var connectionSettings = new PokerConnectionSettings(
+                new System.Uri(configueration.GetValue<string>("PokerConnectionSettings:PlanningSocketUri")),
+                new System.Uri(configueration.GetValue<string>("PokerConnectionSettings:PlanningApiUri")),
+                configueration.GetValue<string>("PokerConnectionSettings:ApiKey")
+            );
             var connectionSettingsOptions = Options.Create(connectionSettings);
 
             var messageParser = new MessageParser();
@@ -44,8 +50,6 @@ namespace PlanningPoker.Client
                 responseMessageParser, planningPokerSocket, userCacheProvider, planningPokerApiService);
             services.AddSingleton(typeof(PlanningConnectionFactory), planningPokerConnectionFactory);
             services = AddResponseMessageFactories(services);
-
-
 
             return services;
         }

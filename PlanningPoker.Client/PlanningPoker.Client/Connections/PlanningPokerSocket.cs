@@ -11,9 +11,9 @@ namespace PlanningPoker.Client.Connections
     {
         private const int ReceiveChunkSize = 1024;
         private ClientWebSocket _planningConnection;
-        private ConnectionSettings _connectionSettings;
+        private PokerConnectionSettings _connectionSettings;
         private CancellationToken _cancellationToken;
-        public PlanningPokerSocket(IOptions<ConnectionSettings> connectionSettings)
+        public PlanningPokerSocket(IOptions<PokerConnectionSettings> connectionSettings)
         {
             _connectionSettings = connectionSettings.Value;
             _planningConnection = new ClientWebSocket();

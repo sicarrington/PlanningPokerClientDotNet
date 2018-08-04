@@ -18,7 +18,7 @@ namespace PlanningPoker.Client.Connections
 {
     public sealed class PlanningPokerConnection
     {
-        private ConnectionSettings _planningSettings;
+        private PokerConnectionSettings _planningSettings;
         private CancellationToken _cancellationToken;
         private IResponseMessageParser _responseMessageParser;
         private IPokerConnection _pokerConnection;
@@ -35,7 +35,7 @@ namespace PlanningPoker.Client.Connections
         private Action _onJoinSessionFailed;
         private Action<PokerSession> _onSessionInformationUpdated;
 
-        internal PlanningPokerConnection(IOptions<ConnectionSettings> connectionSettings,
+        internal PlanningPokerConnection(IOptions<PokerConnectionSettings> connectionSettings,
             IResponseMessageParser responseMessageParser, IPokerConnection pokerConnection,
             UserCacheProvider userCacheProvider, IPlanningPokerService planningPokerService)
         {
@@ -86,7 +86,10 @@ namespace PlanningPoker.Client.Connections
             }
             await _pokerConnection.Send($"PP 1.0\nMessageType:JoinSession\nUserName:{userName}\nSessionId:{sessionId}\nIsObserver:false");
         }
+        public async Task PlaceVote()
+        {
 
+        }
         private async void ProcessMessageFromServer(string message)
         {
             try
