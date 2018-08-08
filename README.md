@@ -4,6 +4,10 @@
 
 [See the nuget pacakge](https://www.nuget.org/packages/PlanningPoker.Client)
 
+[![Build status](https://ci.appveyor.com/api/projects/status/x2622fil7go09eo9/branch/master?svg=true)](https://ci.appveyor.com/project/sicarrington/planningpokerclientdotnet/branch/master)
+
+[![Coverage Status](https://coveralls.io/repos/github/sicarrington/PlanningPokerClientDotNet/badge.svg?branch=master)](https://coveralls.io/github/sicarrington/PlanningPokerClientDotNet?branch=master)
+
 ## Example Usage
 
 Use ```AddPlanningPokerClient()``` method to add dependencies into DI container:
