@@ -29,7 +29,7 @@ test_script:
   # run the unit tests (requires changing into the test directory)
   # - cmd: ../PlanningPoker.Client.Tests
   - cmd: dotnet test ./PlanningPoker.Client/PlanningPoker.Client.Tests/PlanningPoker.Client.Tests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-  - cmd: ./coverage.sh
+  - cmd: bash coveralls.sh
 on_finish :
   # any cleanup in here
 deploy: off
