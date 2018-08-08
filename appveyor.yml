@@ -28,7 +28,7 @@ test_script:
   - cmd: dotnet restore ./PlanningPoker.Client/PlanningPoker.Client.Tests/PlanningPoker.Client.Tests.csproj --verbosity m
   # run the unit tests (requires changing into the test directory)
   # - cmd: ../PlanningPoker.Client.Tests
-  - cmd: dotnet ./PlanningPoker.Client/PlanningPoker.Client.Tests/PlanningPoker.Client.Tests.csproj
+  - cmd: dotnet test ./PlanningPoker.Client/PlanningPoker.Client.Tests/PlanningPoker.Client.Tests.csproj
 on_finish :
   # any cleanup in here
 deploy: off
