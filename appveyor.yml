@@ -15,7 +15,7 @@ before_build:
   - cmd: dotnet restore ./PlanningPoker.Client/PlanningPoker.Client/PlanningPoker.Client.csproj --verbosity m
 build_script:
   # output will be in ./src/bin/debug/netversion/publish
-  - cmd: dotnet publish ./PlanningPoker.ClientPlanningPoker.Client/PlanningPoker.Client.csproj
+  - cmd: dotnet publish ./PlanningPoker.Client/PlanningPoker.Client/PlanningPoker.Client.csproj
 after_build:
   # For once the build has completed
 artifacts:
