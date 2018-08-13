@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Extensions.Options;
 using PlanningPoker.Client.MessageFactories;
 using PlanningPoker.Client.Services;
@@ -16,11 +17,11 @@ namespace PlanningPoker.Client.Connections
             IResponseMessageParser responseMessageParser, IPokerConnection pokerConnection,
             UserCacheProvider userCacheProvider, IPlanningPokerService planningPokerService)
         {
-            _connectionSettings = connectionSettings;
-            _responseMessageParser = responseMessageParser;
-            _pokerConnection = pokerConnection;
-            _userCacheProvider = userCacheProvider;
-            _planningPokerService = planningPokerService;
+            _connectionSettings = connectionSettings ?? throw new ArgumentNullException(nameof(connectionSettings));
+            _responseMessageParser = responseMessageParser ?? throw new ArgumentNullException(nameof(responseMessageParser));
+            _pokerConnection = pokerConnection ?? throw new ArgumentNullException(nameof(pokerConnection));
+            _userCacheProvider = userCacheProvider ?? throw new ArgumentNullException(nameof(userCacheProvider));
+            _planningPokerService = planningPokerService ?? throw new ArgumentNullException(nameof(planningPokerService));
         }
         public PlanningPokerConnection NewConnection()
         {
