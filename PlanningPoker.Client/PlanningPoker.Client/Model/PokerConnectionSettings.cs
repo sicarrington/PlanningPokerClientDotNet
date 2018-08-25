@@ -16,8 +16,6 @@ namespace PlanningPoker.Client
             this.PlanningSocketUri = planningSocktUri;
             this.PlanningApiUri = planningApiUrl;
             this.ApiKey = apiKey;
-            // this.PlanningApiUri = new Uri("https://sicarringtonplanningpokerapinew.azurewebsites.net/api");
-            // this.PlanningSocketUri = new Uri("wss://planningpokercore.azurewebsites.net/ws");
         }
     }
 }
