@@ -16,7 +16,7 @@ using PlanningPoker.Client.Utilities;
 
 namespace PlanningPoker.Client.Connections
 {
-    public sealed class PlanningPokerConnection
+    public sealed class PlanningPokerConnection : IPlanningPokerConnection
     {
         private PokerConnectionSettings _planningSettings;
         private CancellationToken _cancellationToken;
@@ -201,47 +201,47 @@ namespace PlanningPoker.Client.Connections
             Task.Factory.StartNew(action);
         }
 
-        public PlanningPokerConnection OnError(Action<Exception> onError)
+        public IPlanningPokerConnection OnError(Action<Exception> onError)
         {
             _onError = onError;
             return this;
         }
-        public PlanningPokerConnection OnSessionSuccesfullyCreated(Action<(string sessionId, string userId)> onSessionSuccesfullyCreated)
+        public IPlanningPokerConnection OnSessionSuccesfullyCreated(Action<(string sessionId, string userId)> onSessionSuccesfullyCreated)
         {
             _onSessionCreationSucceeded = onSessionSuccesfullyCreated;
             return this;
         }
-        public PlanningPokerConnection OnSessionCreationFailed(Action onsessionCreationFailed)
+        public IPlanningPokerConnection OnSessionCreationFailed(Action onsessionCreationFailed)
         {
             _onSessionCreationFailed = onsessionCreationFailed;
             return this;
         }
-        public PlanningPokerConnection OnDisconnected(Action onDisconnected)
+        public IPlanningPokerConnection OnDisconnected(Action onDisconnected)
         {
             _onDisconnected = onDisconnected;
             return this;
         }
-        public PlanningPokerConnection OnSessionSubscribeSucceeded(Action sessionSubscribeSucceeded)
+        public IPlanningPokerConnection OnSessionSubscribeSucceeded(Action sessionSubscribeSucceeded)
         {
             _onSessionSubscribeSucceeded = sessionSubscribeSucceeded;
             return this;
         }
-        public PlanningPokerConnection OnSessionSubscribeFailed(Action sessionSubscribeFailed)
+        public IPlanningPokerConnection OnSessionSubscribeFailed(Action sessionSubscribeFailed)
         {
             _onSessionSubscribeFailed = sessionSubscribeFailed;
             return this;
         }
-        public PlanningPokerConnection OnJoinSessionSucceeded(Action joinSessionSuceeded)
+        public IPlanningPokerConnection OnJoinSessionSucceeded(Action joinSessionSuceeded)
         {
             _onJoinSessionSucceeded = joinSessionSuceeded;
             return this;
         }
-        public PlanningPokerConnection OnJoinSessionFailed(Action joinSessionFailed)
+        public IPlanningPokerConnection OnJoinSessionFailed(Action joinSessionFailed)
         {
             _onJoinSessionFailed = joinSessionFailed;
             return this;
         }
-        public PlanningPokerConnection OnSessionInformationUpdated(Action<PokerSession> sessionInformationUpdated)
+        public IPlanningPokerConnection OnSessionInformationUpdated(Action<PokerSession> sessionInformationUpdated)
         {
             _onSessionInformationUpdated = sessionInformationUpdated;
             return this;

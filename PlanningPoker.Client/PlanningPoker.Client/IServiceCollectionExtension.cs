@@ -84,7 +84,7 @@ namespace PlanningPoker.Client
 
             var planningPokerConnectionFactory = new PlanningConnectionFactory(connectionSettingsOptions,
                 responseMessageParser, planningPokerSocket, userCacheProvider, planningPokerApiService);
-            services.AddSingleton(typeof(PlanningConnectionFactory), planningPokerConnectionFactory);
+            services.AddSingleton(typeof(IPlanningConnectionFactory), planningPokerConnectionFactory);
             services = AddResponseMessageFactories(services);
 
             return services;

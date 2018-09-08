@@ -6,7 +6,7 @@ using PlanningPoker.Client.Utilities;
 
 namespace PlanningPoker.Client.Connections
 {
-    public sealed class PlanningConnectionFactory
+    public sealed class PlanningConnectionFactory : IPlanningConnectionFactory
     {
         private IOptions<PokerConnectionSettings> _connectionSettings;
         private IResponseMessageParser _responseMessageParser;
@@ -23,7 +23,7 @@ namespace PlanningPoker.Client.Connections
             _userCacheProvider = userCacheProvider ?? throw new ArgumentNullException(nameof(userCacheProvider));
             _planningPokerService = planningPokerService ?? throw new ArgumentNullException(nameof(planningPokerService));
         }
-        public PlanningPokerConnection NewConnection()
+        public IPlanningPokerConnection NewConnection()
         {
             return new PlanningPokerConnection(_connectionSettings, _responseMessageParser, _pokerConnection, _userCacheProvider, _planningPokerService);
         }
