@@ -182,7 +182,7 @@ namespace PlanningPoker.Client.Tests.IServiceCollectionExtensionTests
         [Fact]
         public void GivenAddPlanningPokerClientIsCalled_WhenServiceCollectionIsReturned_ThenPlanningConnectionFactoryIsConfigured()
         {
-            var service = (PlanningConnectionFactory)_configuredServiceProvider.GetService(typeof(PlanningConnectionFactory));
+            var service = (IPlanningConnectionFactory)_configuredServiceProvider.GetService(typeof(IPlanningConnectionFactory));
 
             Assert.NotNull(service);
         }
