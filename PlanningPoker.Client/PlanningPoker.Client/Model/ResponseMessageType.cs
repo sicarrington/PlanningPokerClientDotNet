@@ -7,6 +7,7 @@ namespace PlanningPoker.Client.Model
         NewSessionResponse,
         JoinSessionResponse,
         SubscribeSessionResponse,
-        RefreshSession
+        RefreshSession,
+        SessionEndedMessage
     }
 }
