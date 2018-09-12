@@ -67,6 +67,7 @@ namespace PlanningPoker.Client
             responseMessageFactories.Add(new SubscribeSessionResponseMessageFactory(messageParser));
             responseMessageFactories.Add(new JoinSessionResponseMessageFactory(messageParser));
             responseMessageFactories.Add(new RefreshSessionMessageFactory(messageParser));
+            responseMessageFactories.Add(new EndSessionClientMessageFactory(messageParser));
 
             var responseMessageParser = new ResponseMessageParser(messageParser, responseMessageFactories);
             services.AddSingleton(typeof(IResponseMessageParser), responseMessageParser);
@@ -95,6 +96,7 @@ namespace PlanningPoker.Client
             services.AddSingleton<IResponseMessageFactory, SubscribeSessionResponseMessageFactory>();
             services.AddSingleton<IResponseMessageFactory, JoinSessionResponseMessageFactory>();
             services.AddSingleton<IResponseMessageFactory, RefreshSessionMessageFactory>();
+            services.AddSingleton<IResponseMessageFactory, EndSessionClientMessageFactory>();
 
             return services;
         }

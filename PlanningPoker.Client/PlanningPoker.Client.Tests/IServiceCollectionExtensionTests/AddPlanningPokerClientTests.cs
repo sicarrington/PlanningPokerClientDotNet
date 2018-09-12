@@ -214,5 +214,12 @@ namespace PlanningPoker.Client.Tests.IServiceCollectionExtensionTests
 
             Assert.True(services.Any(x => x is RefreshSessionMessageFactory));
         }
+        [Fact]
+        public void GivenAddPlanningPokerClientIsCalled_WhenServiceCollectionIsReturned_ThenEndSessionClientMessageFactoryIsConfigured()
+        {
+            var services = (IEnumerable<IResponseMessageFactory>)_configuredServiceProvider.GetServices(typeof(IResponseMessageFactory));
+
+            Assert.True(services.Any(x => x is EndSessionClientMessageFactory));
+        }
     }
 }
