@@ -8,10 +8,8 @@ namespace PlanningPoker.Client.Tests.ExceptionTests.ConfigurationExceptionTests
         [Fact]
         public void GivenConstructorIsCalled_WhenMessagePassedIsNull_ThenExceptionIsConstructedWithEmptyMessage()
         {
-            ConfigurationException result = null;
             try
             {
-                string message = null;
                 new ConfigurationException(null, new System.Exception());
             }
             catch (ConfigurationException ex)

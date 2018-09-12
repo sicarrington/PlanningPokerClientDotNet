@@ -8,10 +8,8 @@ namespace PlanningPoker.Client.Tests.ExceptionTests.NotFoundExceptionTests
         [Fact]
         public void GivenConstructorIsCalled_WhenMessagePassedIsNull_ThenExceptionIsConstructedWithEmptyMessage()
         {
-            NotFoundException result = null;
             try
             {
-                string message = null;
                 new NotFoundException(null, new System.Exception());
             }
             catch (NotFoundException ex)

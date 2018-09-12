@@ -86,10 +86,10 @@ namespace PlanningPoker.Client.Connections
             }
             await _pokerConnection.Send($"PP 1.0\nMessageType:JoinSession\nUserName:{userName}\nSessionId:{sessionId}\nIsObserver:false");
         }
-        public async Task PlaceVote()
-        {
-
-        }
+        // public async Task PlaceVote()
+        // {
+        //     throw new NotImplementedException();
+        // }
         private async void ProcessMessageFromServer(string message)
         {
             try
@@ -189,7 +189,7 @@ namespace PlanningPoker.Client.Connections
                         await _userCacheProvider.UpdateUser(sessionInformation.SessionId, sessionUser.Id, cachedUser.Token,
                             sessionUser.Name, sessionUser.IsHost, sessionUser.IsObserver);
                     }
-                    catch (NotFoundException e)
+                    catch (NotFoundException)
                     {
                         //User is not in cache, we don't want to update
                     }
