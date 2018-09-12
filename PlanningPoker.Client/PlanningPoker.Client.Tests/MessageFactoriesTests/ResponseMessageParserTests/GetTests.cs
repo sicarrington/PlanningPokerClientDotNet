@@ -22,6 +22,7 @@ namespace PlanningPoker.Client.Tests.MessageFactoriesTests.ResponseMessageParser
             responseMessageFactories.Add(new SubscribeSessionResponseMessageFactory(_messageParser));
             responseMessageFactories.Add(new JoinSessionResponseMessageFactory(_messageParser));
             responseMessageFactories.Add(new RefreshSessionMessageFactory(_messageParser));
+            responseMessageFactories.Add(new EndSessionClientMessageFactory(_messageParser));
 
             _responseMessageFactory = new ResponseMessageParser(_messageParser, responseMessageFactories);
         }
@@ -84,6 +85,13 @@ namespace PlanningPoker.Client.Tests.MessageFactoriesTests.ResponseMessageParser
             var result = _responseMessageFactory.Get($"PP 1.0\nMessageType:RefreshSession\nSuccess:true\nSessionId:12345\n");
 
             Assert.IsType<RefreshSessionResponse>(result);
+        }
+        [Fact]
+        public void GivenGetIsCalled_WhenMessageTypeIsSessionEndedMessage_ThenSessionEndedMessageIsReturned()
+        {
+            var result = _responseMessageFactory.Get($"PP 1.0\nMessageType:SessionEndedMessage\nSessionId:12345\n");
+
+            Assert.IsType<EndSessionClientMessage>(result);
         }
     }
 }
