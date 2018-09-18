@@ -14,7 +14,7 @@ namespace PlanningPoker.Client.Utilities
         {
             _userCache = new ConcurrentDictionary<string, UserCacheItem>();
         }
-        internal virtual Task<UserCacheItem>    GetUser(string sessionId, string userId)
+        internal virtual Task<UserCacheItem> GetUser(string sessionId, string userId)
         {
             if (string.IsNullOrWhiteSpace(sessionId))
             {
@@ -88,6 +88,16 @@ namespace PlanningPoker.Client.Utilities
             }
 
             return Task.CompletedTask;
+        }
+        internal virtual Task<bool> DeleteUser(string sessionId, string userId)
+        {
+            string storageKey = getKey(sessionId, userId);
+            if (!_userCache.ContainsKey(storageKey))
+            {
+                return Task.FromResult(false);
+            }
+            UserCacheItem userCacheItem;
+            return Task.FromResult(_userCache.TryRemove(storageKey, out userCacheItem));
         }
         private void AddOrUpdate(string sessionId, string userId, string token, string userName = null, bool? isHost = null, bool? isObserver = null)
         {
