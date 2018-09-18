@@ -33,6 +33,7 @@ namespace PlanningPoker.Client.Connections
         private Action _onSessionSubscribeFailed;
         private Action _onJoinSessionSucceeded;
         private Action _onJoinSessionFailed;
+        private Action _onSessionEnded;
         private Action<PokerSession> _onSessionInformationUpdated;
 
         internal PlanningPokerConnection(IOptions<PokerConnectionSettings> connectionSettings,
@@ -168,6 +169,16 @@ namespace PlanningPoker.Client.Connections
                         RunInTask(() => _onSessionInformationUpdated(sessionInformation));
                     }
                 }
+                else if (parsedMessage is EndSessionClientMessage)
+                {
+                    var typedMessage = parsedMessage as EndSessionClientMessage;
+                    await _pokerConnection.Disconnect();
+
+                    if (_onSessionEnded != null)
+                    {
+                        RunInTask(() => _onSessionEnded());
+                    }
+                }
             }
             catch (InvalidOperationException ex)
             {
@@ -244,6 +255,11 @@ namespace PlanningPoker.Client.Connections
         public IPlanningPokerConnection OnSessionInformationUpdated(Action<PokerSession> sessionInformationUpdated)
         {
             _onSessionInformationUpdated = sessionInformationUpdated;
+            return this;
+        }
+        public IPlanningPokerConnection OnSessionEnded(Action sessionEnded)
+        {
+            _onSessionEnded = sessionEnded;
             return this;
         }
     }

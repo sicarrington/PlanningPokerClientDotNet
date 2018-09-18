@@ -10,30 +10,41 @@ namespace PlanningPoker.Client.Connections
     internal sealed class PlanningPokerSocket : IPokerConnection
     {
         private const int ReceiveChunkSize = 1024;
-        private ClientWebSocket _planningConnection;
+        private ClientWebSocket _websocket;
         private PokerConnectionSettings _connectionSettings;
         private CancellationToken _cancellationToken;
         public PlanningPokerSocket(IOptions<PokerConnectionSettings> connectionSettings)
         {
             _connectionSettings = connectionSettings.Value;
-            _planningConnection = new ClientWebSocket();
+            _websocket = new ClientWebSocket();
         }
         public async Task Initialize(Action<string> onMessageFromServer, Action onDisconnected, CancellationToken cancellationToken)
         {
             _cancellationToken = cancellationToken;
-            _planningConnection = new ClientWebSocket();
-            await _planningConnection.ConnectAsync(_connectionSettings.PlanningSocketUri, _cancellationToken);
+            _websocket = new ClientWebSocket();
+            await _websocket.ConnectAsync(_connectionSettings.PlanningSocketUri, _cancellationToken);
             StartListen(onMessageFromServer, onDisconnected);
         }
         public async Task Send(string message)
         {
             EnsureConnection();
-            await _planningConnection.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(message)), WebSocketMessageType.Text, true, _cancellationToken);
+            await _websocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(message)), WebSocketMessageType.Text, true, _cancellationToken);
 
+        }
+        public async Task Disconnect()
+        {
+            if (_websocket?.State == WebSocketState.Open)
+            {
+                try
+                {
+                    await _websocket.CloseOutputAsync(WebSocketCloseStatus.NormalClosure, "User requested disconnect", _cancellationToken);
+                }
+                catch (Exception) { }
+            }
         }
         private void EnsureConnection()
         {
-            if (_planningConnection.State != WebSocketState.Open)
+            if (_websocket.State != WebSocketState.Open)
             {
                 throw new InvalidOperationException("Socket is not open");
             }
@@ -48,19 +59,19 @@ namespace PlanningPoker.Client.Connections
 
             try
             {
-                while (_planningConnection.State == WebSocketState.Open)
+                while (_websocket.State == WebSocketState.Open)
                 {
                     var fullMessage = new StringBuilder();
 
                     WebSocketReceiveResult result;
                     do
                     {
-                        result = await _planningConnection.ReceiveAsync(new ArraySegment<byte>(buffer), _cancellationToken);
+                        result = await _websocket.ReceiveAsync(new ArraySegment<byte>(buffer), _cancellationToken);
 
                         if (result.MessageType == WebSocketMessageType.Close)
                         {
                             await
-                                _planningConnection.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
+                                _websocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
                         }
                         else
                         {
@@ -79,7 +90,7 @@ namespace PlanningPoker.Client.Connections
             }
             finally
             {
-                _planningConnection.Dispose();
+                _websocket.Dispose();
             }
         }
     }

@@ -8,5 +8,6 @@ namespace PlanningPoker.Client.Connections
     {
         Task Initialize(Action<string> onMessageFromServer, Action onDisconnected, CancellationToken cancellationToken);
         Task Send(string message);
+        Task Disconnect();
     }
 }
