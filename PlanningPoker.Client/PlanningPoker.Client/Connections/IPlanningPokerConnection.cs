@@ -20,5 +20,6 @@ namespace PlanningPoker.Client.Connections
         IPlanningPokerConnection OnJoinSessionSucceeded(Action joinSessionSuceeded);
         IPlanningPokerConnection OnJoinSessionFailed(Action joinSessionFailed);
         IPlanningPokerConnection OnSessionInformationUpdated(Action<PokerSession> sessionInformationUpdated);
+        IPlanningPokerConnection OnSessionEnded();
     }
 }
