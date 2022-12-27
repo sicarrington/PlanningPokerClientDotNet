@@ -27,9 +27,9 @@ namespace PlanningPoker.Client.Services
                 throw new ArgumentNullException(nameof(sessionId));
             }
             System.Diagnostics.Debug.WriteLine($"APi Key: {_connectionSettings.ApiKey}");
-            System.Diagnostics.Debug.WriteLine($"URL: {_connectionSettings.PlanningApiUri}Sessions/" + sessionId);
+            System.Diagnostics.Debug.WriteLine($"URL: {_connectionSettings.PlanningApiUri}sessions/" + sessionId);
 
-            var response = await _httpClient.GetAsync($"{_connectionSettings.PlanningApiUri}Sessions/" + sessionId);
+            var response = await _httpClient.GetAsync($"{_connectionSettings.PlanningApiUri}sessions/" + sessionId);
             if (!response.IsSuccessStatusCode)
             {
                 throw new NotFoundException($"Session with the id {sessionId} was not found. {_connectionSettings.ApiKey}");

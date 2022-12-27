@@ -73,7 +73,7 @@ namespace PlanningPoker.Client.Tests.ServicesTests.PlanningPokerApiServiceTests
             _fakeHttpMessageHandler.Verify(x => x.Send(
                 It.Is<HttpRequestMessage>(m =>
                     m.Method == HttpMethod.Get &&
-                    m.RequestUri == new Uri($"{_serviceUri}Sessions/{sessionId}"))), Times.Once);
+                    m.RequestUri == new Uri($"{_serviceUri}sessions/{sessionId}"))), Times.Once);
         }
         [Fact]
         public async void GivenGetSessionDetailsIsCalled_WhenSpecifiedSessionIsNotFound_ThenErrorIsThrown()
