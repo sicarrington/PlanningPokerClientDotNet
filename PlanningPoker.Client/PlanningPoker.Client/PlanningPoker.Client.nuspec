@@ -2,12 +2,13 @@
 <package xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <id>PlanningPoker.Client</id>
-    <version>0.0.1</version>
+    <version>0.0.9</version>
     <authors>Simon Carrington</authors>
     <owners>Simon Carrington</owners>
     <projectUrl>https://github.com/sicarrington/PlanningPokerClientDotNet</projectUrl>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>Dotnet core client library for planning poker</description>
     <tags>planningpoker agile</tags>
+    <license type="expression">Apache-2.0</license>
   </metadata>
 </package>
