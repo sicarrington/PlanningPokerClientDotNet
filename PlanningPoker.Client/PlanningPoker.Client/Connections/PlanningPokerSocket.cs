@@ -85,7 +85,6 @@ namespace PlanningPoker.Client.Connections
             }
             catch (Exception)
             {
-
                 onDisconnected();
             }
             finally

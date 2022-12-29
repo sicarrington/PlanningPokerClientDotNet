@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlanningPoker.Client.Tests"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlanningPoker.Client", "PlanningPoker.Client\PlanningPoker.Client.csproj", "{A8BFE1CA-6CB3-4242-851B-7D756044B014}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlanningPoker.Client.Tests.Integration", "PlanningPoker.Client.Tests.Integration\PlanningPoker.Client.Tests.Integration.csproj", "{401B4076-0E7A-4F5F-9BD6-C4ADD3EE3035}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,9 +50,22 @@ Global
 		{A8BFE1CA-6CB3-4242-851B-7D756044B014}.Release|x64.Build.0 = Release|Any CPU
 		{A8BFE1CA-6CB3-4242-851B-7D756044B014}.Release|x86.ActiveCfg = Release|Any CPU
 		{A8BFE1CA-6CB3-4242-851B-7D756044B014}.Release|x86.Build.0 = Release|Any CPU
+		{401B4076-0E7A-4F5F-9BD6-C4ADD3EE3035}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{401B4076-0E7A-4F5F-9BD6-C4ADD3EE3035}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{401B4076-0E7A-4F5F-9BD6-C4ADD3EE3035}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{401B4076-0E7A-4F5F-9BD6-C4ADD3EE3035}.Debug|x64.Build.0 = Debug|Any CPU
+		{401B4076-0E7A-4F5F-9BD6-C4ADD3EE3035}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{401B4076-0E7A-4F5F-9BD6-C4ADD3EE3035}.Debug|x86.Build.0 = Debug|Any CPU
+		{401B4076-0E7A-4F5F-9BD6-C4ADD3EE3035}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{401B4076-0E7A-4F5F-9BD6-C4ADD3EE3035}.Release|Any CPU.Build.0 = Release|Any CPU
+		{401B4076-0E7A-4F5F-9BD6-C4ADD3EE3035}.Release|x64.ActiveCfg = Release|Any CPU
+		{401B4076-0E7A-4F5F-9BD6-C4ADD3EE3035}.Release|x64.Build.0 = Release|Any CPU
+		{401B4076-0E7A-4F5F-9BD6-C4ADD3EE3035}.Release|x86.ActiveCfg = Release|Any CPU
+		{401B4076-0E7A-4F5F-9BD6-C4ADD3EE3035}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{E9A7683E-FD73-45C3-9649-8D1BE3353217} = {4D52327D-85F2-4F04-9DD2-011F263B53D6}
 		{A8BFE1CA-6CB3-4242-851B-7D756044B014} = {521F78C3-114D-40A4-A28C-3779BD679963}
+		{401B4076-0E7A-4F5F-9BD6-C4ADD3EE3035} = {4D52327D-85F2-4F04-9DD2-011F263B53D6}
 	EndGlobalSection
 EndGlobal
