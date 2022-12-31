@@ -31,7 +31,22 @@ namespace PlanningPoker.Client.MessageFactories
                 {
                     throw new InvalidOperationException("SessionId is missing from message");
                 }
-                return new RefreshSessionResponse(sessionId);
+
+                var refreshMessage = new RefreshSessionResponse(sessionId);
+
+                var sessionInformation = _messageParser.GetFieldFromMessage(message, "SessionInformation");
+                if (!string.IsNullOrWhiteSpace(sessionInformation))
+                {
+                    var deserialized = System.Text.Json.JsonSerializer.Deserialize<PokerSession>(Convert.FromBase64String(sessionInformation),
+                        new System.Text.Json.JsonSerializerOptions
+                    {
+                        PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase,
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    refreshMessage.PokerSessionInformation = deserialized;
+                }
+                return refreshMessage;
             }
             else
             {

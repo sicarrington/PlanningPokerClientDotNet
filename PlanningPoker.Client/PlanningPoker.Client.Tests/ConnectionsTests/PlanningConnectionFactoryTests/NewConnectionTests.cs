@@ -1,3 +1,5 @@
+using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using PlanningPoker.Client.Connections;
@@ -16,6 +18,9 @@ namespace PlanningPoker.Client.Tests.ConnectionsTests.PlanningPokerConnectionFac
         private Mock<UserCacheProvider> _userCacheProvider;
         private Mock<IPlanningPokerService> _planningPokerService;
         private PlanningConnectionFactory _planningConnectionFactory;
+        private readonly Mock<ILogger<PlanningPokerConnection>> _logger;
+
+
         public NewConnectionTests()
         {
             _connectionSettings = new Mock<IOptions<PokerConnectionSettings>>();
@@ -23,8 +28,10 @@ namespace PlanningPoker.Client.Tests.ConnectionsTests.PlanningPokerConnectionFac
             _pokerConnection = new Mock<IPokerConnection>();
             _userCacheProvider = new Mock<UserCacheProvider>();
             _planningPokerService = new Mock<IPlanningPokerService>();
+            _logger = new Mock<ILogger<PlanningPokerConnection>>();
 
-            _planningConnectionFactory = new PlanningConnectionFactory(_connectionSettings.Object, _responseMessageParser.Object, _pokerConnection.Object, _userCacheProvider.Object, _planningPokerService.Object);
+            _planningConnectionFactory = new PlanningConnectionFactory(_connectionSettings.Object, _responseMessageParser.Object, _pokerConnection.Object,
+                _userCacheProvider.Object, _planningPokerService.Object, _logger.Object);
         }
         [Fact]
         public void GivenNewConnectionIsCalled_ThenNewInstanceOfPlanningPokerConnectionIsReturned()

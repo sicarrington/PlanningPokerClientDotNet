@@ -2,7 +2,7 @@
 <package xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <id>PlanningPoker.Client</id>
-    <version>0.0.9</version>
+    <version>0.0.12</version>
     <authors>Simon Carrington</authors>
     <owners>Simon Carrington</owners>
     <projectUrl>https://github.com/sicarrington/PlanningPokerClientDotNet</projectUrl>
@@ -10,5 +10,14 @@
     <description>Dotnet core client library for planning poker</description>
     <tags>planningpoker agile</tags>
     <license type="expression">Apache-2.0</license>
+    <dependencies>
+        <dependency id="Microsoft.AspNetCore.WebSockets" version="2.2.1" />
+        <dependency id="Microsoft.Extensions.Configuration" version="7.0.0" />
+        <dependency id="Microsoft.Extensions.Configuration.Binder" version="7.0.1" />
+        <dependency id="Microsoft.Extensions.DependencyInjection" version="7.0.0" />
+        <dependency id="Newtonsoft.Json" version="13.0.2" />
+        <dependency id="System.Net.WebSockets.Client" version="4.3.2" />
+        <dependency id="Microsoft.Extensions.Http" version="7.0.0" />
+    </dependencies>
   </metadata>
 </package>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PlanningPoker.Client.Connections;
 using PlanningPoker.Client.Exceptions;
@@ -71,7 +72,8 @@ namespace PlanningPoker.Client
                         provider.GetRequiredService<IResponseMessageParser>(),
                         provider.GetRequiredService<IPokerConnection>(),
                         provider.GetRequiredService<UserCacheProvider>(),
-                        provider.GetRequiredService<IPlanningPokerService>()))
+                        provider.GetRequiredService<IPlanningPokerService>(),
+                        provider.GetRequiredService<ILogger<PlanningPokerConnection>>()))
                 .AddResponseMessageFactories();
         }
 
