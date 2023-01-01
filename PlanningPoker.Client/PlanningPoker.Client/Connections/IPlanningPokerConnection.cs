@@ -11,6 +11,7 @@ namespace PlanningPoker.Client.Connections
         Task CreateSession(string hostName);
         Task SubscribeSession(string userId, string sessionId);
         Task JoinSession(string sessionId, string userName);
+        Task PlaceVote(string sessionId, string userId, StoryPoint vote);
         IPlanningPokerConnection OnError(Action<Exception> onError);
         IPlanningPokerConnection OnSessionSuccesfullyCreated(Action<(string sessionId, string userId)> onSessionSuccesfullyCreated);
         IPlanningPokerConnection OnSessionCreationFailed(Action onsessionCreationFailed);

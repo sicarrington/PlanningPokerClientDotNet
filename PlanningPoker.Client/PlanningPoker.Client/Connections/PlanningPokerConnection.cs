@@ -94,10 +94,15 @@ namespace PlanningPoker.Client.Connections
             _logger.LogDebug("Processing JoinSession");
             await _pokerConnection.Send($"PP 1.0\nMessageType:JoinSession\nUserName:{userName}\nSessionId:{sessionId}\nIsObserver:false");
         }
-        // public async Task PlaceVote()
-        // {
-        //     throw new NotImplementedException();
-        // }
+
+        public async Task PlaceVote(string sessionId, string userId, StoryPoint vote)
+        {
+            var userCache = await _userCacheProvider.GetUser(sessionId, userId);
+                        
+            var message = "PP 1.0\nMessageType:UpdateSessionMemberMessage\nSessionId:" + sessionId + "\nUserToUpdateId:" + userId + "\nUserId:" + userId + "\nUserName:" + userCache.UserName + "\nVote:" + (int)vote + "\nIsHost:" + userCache.IsHost + "\nIsObserver:" + userCache.IsObserver + "\nToken:" + userCache.Token;
+            await _pokerConnection.Send(message);
+        }
+
         private async void ProcessMessageFromServer(string message)
         {
             try
@@ -110,6 +115,11 @@ namespace PlanningPoker.Client.Connections
                     if (typedMessage.Success)
                     {
                         await _userCacheProvider.AddUser(typedMessage.SessionId, typedMessage.UserId, typedMessage.UserToken);
+
+                        //Cache needs immediately to be updated for certain scenarios
+                        var sessionInformation = await _planningPokerService.GetSessionDetails(typedMessage.SessionId);
+                        await UpdateCachedUserDetails(sessionInformation);
+
                         if (_onSessionCreationSucceeded != null)
                         {
                             RunInTask(() => _onSessionCreationSucceeded((
@@ -150,6 +160,10 @@ namespace PlanningPoker.Client.Connections
                     if (typedMessage.Success)
                     {
                         await _userCacheProvider.AddUser(typedMessage.SessionId, typedMessage.UserId, typedMessage.UserToken);
+
+                        var sessionInformation = await _planningPokerService.GetSessionDetails(typedMessage.SessionId);
+                        await UpdateCachedUserDetails(sessionInformation);
+
                         if (_onJoinSessionSucceeded != null)
                         {
                             RunInTask(() => _onJoinSessionSucceeded());
