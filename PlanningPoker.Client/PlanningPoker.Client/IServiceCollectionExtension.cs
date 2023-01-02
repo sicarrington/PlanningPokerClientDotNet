@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PlanningPoker.Client.Connections;
 using PlanningPoker.Client.Exceptions;
@@ -46,6 +47,7 @@ namespace PlanningPoker.Client
 
             return (planningSocketUri, planningApiUri, planningApiKey);
         }
+
         public static IServiceCollection AddPlanningPokerClient(this IServiceCollection services, IConfigurationRoot configuration)
         {
             services.Configure<PokerConnectionSettings>(options => configuration.GetSection("PokerConnectionSettings").Bind(options));
@@ -59,38 +61,23 @@ namespace PlanningPoker.Client
             );
             var connectionSettingsOptions = Options.Create(connectionSettings);
 
-            var messageParser = new MessageParser();
-            services.AddSingleton(typeof(MessageParser), messageParser);
-
-            var responseMessageFactories = new List<IResponseMessageFactory>();
-            responseMessageFactories.Add(new NewSessionResponseMessageFactory(messageParser));
-            responseMessageFactories.Add(new SubscribeSessionResponseMessageFactory(messageParser));
-            responseMessageFactories.Add(new JoinSessionResponseMessageFactory(messageParser));
-            responseMessageFactories.Add(new RefreshSessionMessageFactory(messageParser));
-            responseMessageFactories.Add(new EndSessionClientMessageFactory(messageParser));
-
-            var responseMessageParser = new ResponseMessageParser(messageParser, responseMessageFactories);
-            services.AddSingleton(typeof(IResponseMessageParser), responseMessageParser);
-
-            var planningPokerSocket = new PlanningPokerSocket(connectionSettingsOptions);
-            services.AddSingleton(typeof(IPokerConnection), planningPokerSocket);
-
-            var userCacheProvider = new UserCacheProvider();
-            services.AddSingleton(typeof(UserCacheProvider), userCacheProvider);
-
-            var httpClient = new HttpClient();
-            services.AddSingleton(typeof(HttpClient), httpClient);
-            var planningPokerApiService = new PlanningPokerApiService(httpClient, connectionSettingsOptions);
-            services.AddSingleton(typeof(IPlanningPokerService), planningPokerApiService);
-
-            var planningPokerConnectionFactory = new PlanningConnectionFactory(connectionSettingsOptions,
-                responseMessageParser, planningPokerSocket, userCacheProvider, planningPokerApiService);
-            services.AddSingleton(typeof(IPlanningConnectionFactory), planningPokerConnectionFactory);
-            services = AddResponseMessageFactories(services);
-
-            return services;
+            return services.AddSingleton<MessageParser>()
+                .AddSingleton<IResponseMessageParser, ResponseMessageParser>()
+                .AddTransient<IPokerConnection, PlanningPokerSocket>()
+                .AddSingleton<UserCacheProvider>()
+                .AddHttpClient()
+                .AddSingleton<IPlanningPokerService, PlanningPokerApiService>()
+                .AddSingleton<IPlanningConnectionFactory>(provider =>
+                    new PlanningConnectionFactory(connectionSettingsOptions,
+                        provider.GetRequiredService<IResponseMessageParser>(),
+                        provider.GetRequiredService<IPokerConnection>(),
+                        provider.GetRequiredService<UserCacheProvider>(),
+                        provider.GetRequiredService<IPlanningPokerService>(),
+                        provider.GetRequiredService<ILogger<PlanningPokerConnection>>()))
+                .AddResponseMessageFactories();
         }
-        private static IServiceCollection AddResponseMessageFactories(IServiceCollection services)
+
+        private static IServiceCollection AddResponseMessageFactories(this IServiceCollection services)
         {
             services.AddSingleton<IResponseMessageFactory, NewSessionResponseMessageFactory>();
             services.AddSingleton<IResponseMessageFactory, SubscribeSessionResponseMessageFactory>();

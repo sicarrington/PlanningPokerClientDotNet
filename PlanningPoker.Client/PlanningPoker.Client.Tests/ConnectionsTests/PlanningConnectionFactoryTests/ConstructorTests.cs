@@ -1,4 +1,5 @@
 using System;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using PlanningPoker.Client.Connections;
@@ -11,11 +12,13 @@ namespace PlanningPoker.Client.Tests.ConnectionsTests.PlanningPokerConnectionFac
 {
     public class ConstructorTests
     {
-        private Mock<IOptions<PokerConnectionSettings>> _connectionSettings;
-        private Mock<IResponseMessageParser> _responseMessageParser;
-        private Mock<IPokerConnection> _pokerConnection;
-        private Mock<UserCacheProvider> _userCacheProvider;
-        private Mock<IPlanningPokerService> _planningPokerService;
+        private readonly Mock<IOptions<PokerConnectionSettings>> _connectionSettings;
+        private readonly Mock<IResponseMessageParser> _responseMessageParser;
+        private readonly Mock<IPokerConnection> _pokerConnection;
+        private readonly Mock<UserCacheProvider> _userCacheProvider;
+        private readonly Mock<IPlanningPokerService> _planningPokerService;
+        private readonly Mock<ILogger<PlanningPokerConnection>> _logger;
+
         public ConstructorTests()
         {
             _connectionSettings = new Mock<IOptions<PokerConnectionSettings>>();
@@ -23,13 +26,14 @@ namespace PlanningPoker.Client.Tests.ConnectionsTests.PlanningPokerConnectionFac
             _pokerConnection = new Mock<IPokerConnection>();
             _userCacheProvider = new Mock<UserCacheProvider>();
             _planningPokerService = new Mock<IPlanningPokerService>();
+            _logger = new Mock<ILogger<PlanningPokerConnection>>();
         }
         [Fact]
         public void GivenConstuctorIsCalled_WhenConnectionSettingsPassedIsNull_ThenExceptionIsThrown()
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                new PlanningConnectionFactory(null, _responseMessageParser.Object, _pokerConnection.Object, _userCacheProvider.Object, _planningPokerService.Object);
+                new PlanningConnectionFactory(null, _responseMessageParser.Object, _pokerConnection.Object, _userCacheProvider.Object, _planningPokerService.Object, _logger.Object);
             });
         }
         [Fact]
@@ -37,7 +41,7 @@ namespace PlanningPoker.Client.Tests.ConnectionsTests.PlanningPokerConnectionFac
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                new PlanningConnectionFactory(_connectionSettings.Object, null, _pokerConnection.Object, _userCacheProvider.Object, _planningPokerService.Object);
+                new PlanningConnectionFactory(_connectionSettings.Object, null, _pokerConnection.Object, _userCacheProvider.Object, _planningPokerService.Object, _logger.Object);
             });
         }
         [Fact]
@@ -45,7 +49,7 @@ namespace PlanningPoker.Client.Tests.ConnectionsTests.PlanningPokerConnectionFac
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                new PlanningConnectionFactory(_connectionSettings.Object, _responseMessageParser.Object, null, _userCacheProvider.Object, _planningPokerService.Object);
+                new PlanningConnectionFactory(_connectionSettings.Object, _responseMessageParser.Object, null, _userCacheProvider.Object, _planningPokerService.Object, _logger.Object);
             });
         }
         [Fact]
@@ -53,7 +57,7 @@ namespace PlanningPoker.Client.Tests.ConnectionsTests.PlanningPokerConnectionFac
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                new PlanningConnectionFactory(_connectionSettings.Object, _responseMessageParser.Object, _pokerConnection.Object, null, _planningPokerService.Object);
+                new PlanningConnectionFactory(_connectionSettings.Object, _responseMessageParser.Object, _pokerConnection.Object, null, _planningPokerService.Object, _logger.Object);
             });
         }
         [Fact]
@@ -61,13 +65,21 @@ namespace PlanningPoker.Client.Tests.ConnectionsTests.PlanningPokerConnectionFac
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                new PlanningConnectionFactory(_connectionSettings.Object, _responseMessageParser.Object, _pokerConnection.Object, _userCacheProvider.Object, null);
+                new PlanningConnectionFactory(_connectionSettings.Object, _responseMessageParser.Object, _pokerConnection.Object, _userCacheProvider.Object, null, _logger.Object);
+            });
+        }
+        [Fact]
+        public void GivenConstuctorIsCalled_WhenLoggerIsNull_ThenExceptionIsThrown()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                new PlanningConnectionFactory(_connectionSettings.Object, _responseMessageParser.Object, _pokerConnection.Object, _userCacheProvider.Object, _planningPokerService.Object, null);
             });
         }
         [Fact]
         public void GivenConstructorIsCalled_WhenValidParametersArePassed_ThenConsturctionSuceeds()
         {
-            var result = new PlanningConnectionFactory(_connectionSettings.Object, _responseMessageParser.Object, _pokerConnection.Object, _userCacheProvider.Object, _planningPokerService.Object);
+            var result = new PlanningConnectionFactory(_connectionSettings.Object, _responseMessageParser.Object, _pokerConnection.Object, _userCacheProvider.Object, _planningPokerService.Object, _logger.Object);
 
             Assert.NotNull(result);
         }

@@ -1,6 +1,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using PlanningPoker.Client.Connections;
@@ -14,13 +16,15 @@ namespace PlanningPoker.Client.Tests.ConnectionsTests.PlanningPokerConnectionTes
 {
     public class CreateSessionTests
     {
-        private Mock<IOptions<PokerConnectionSettings>> _options;
-        private Mock<PokerConnectionSettings> _connectionSettings;
-        private Mock<IResponseMessageParser> _responseMessageParser;
-        private Mock<IPokerConnection> _pokerConnection;
-        private Mock<UserCacheProvider> _userCacheProvider;
-        private PlanningPokerConnection _planningPokerConnection;
-        private Mock<IPlanningPokerService> _planningPokerService;
+        private readonly Mock<IOptions<PokerConnectionSettings>> _options;
+        private readonly Mock<PokerConnectionSettings> _connectionSettings;
+        private readonly Mock<IResponseMessageParser> _responseMessageParser;
+        private readonly Mock<IPokerConnection> _pokerConnection;
+        private readonly Mock<UserCacheProvider> _userCacheProvider;
+        private readonly PlanningPokerConnection _planningPokerConnection;
+        private readonly Mock<IPlanningPokerService> _planningPokerService;
+        private readonly Mock<ILogger<PlanningPokerConnection>> _logger;
+
         public CreateSessionTests()
         {
             _connectionSettings = new Mock<PokerConnectionSettings>();
@@ -30,9 +34,10 @@ namespace PlanningPoker.Client.Tests.ConnectionsTests.PlanningPokerConnectionTes
             _pokerConnection = new Mock<IPokerConnection>();
             _userCacheProvider = new Mock<UserCacheProvider>();
             _planningPokerService = new Mock<IPlanningPokerService>();
+            _logger = new Mock<ILogger<PlanningPokerConnection>>();
 
             _planningPokerConnection = new PlanningPokerConnection(_options.Object, _responseMessageParser.Object,
-                _pokerConnection.Object, _userCacheProvider.Object, _planningPokerService.Object);
+                _pokerConnection.Object, _userCacheProvider.Object, _planningPokerService.Object, _logger.Object);
         }
         [Fact]
         public async void GivenCreateSessionIsCalled_WhenHostNamePassedIsNull_ThenExceptionIsThrown()

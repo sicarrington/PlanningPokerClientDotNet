@@ -22,7 +22,7 @@ Use ```AddPlanningPokerClient()``` method to add dependencies into DI container:
 In order to make a connection, use ```PlanningConnectionFactory``` to create a new instace. 
 Start the connection by calling the ```Start()``` method.
 ```csharp
-    var connectionFactor = serviceProvider.GetService<PlanningConnectionFactory>();
+    var connectionFactor = serviceProvider.GetService<IPlanningConnectionFactory>();
     var connection = connectionFactor.NewConnection();
 
     //Set up handling for events on the connection:
@@ -50,9 +50,9 @@ Start the connection by calling the ```Start()``` method.
 
 Adding settings:
 ```json
-"PokerConnectionSettings":{
-        "PlanningSocketUri":"https://sicarringtonplanningpokerapinew.azurewebsites.net/api",
-        "PlanningApiUri":"wss://planningpokercore.azurewebsites.net/ws",
-        "ApiKey":"12345"
+  "PokerConnectionSettings": {
+    "PlanningSocketUri": "wss://planningpokercore.sicarrington.com/core/ws",
+    "PlanningApiUri": "https://planningpokerapi.sicarrington.com",
+    "ApiKey": "12345"
 }
 ```

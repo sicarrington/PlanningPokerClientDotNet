@@ -3,6 +3,7 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace PlanningPoker.Client.Connections
@@ -13,9 +14,12 @@ namespace PlanningPoker.Client.Connections
         private ClientWebSocket _websocket;
         private PokerConnectionSettings _connectionSettings;
         private CancellationToken _cancellationToken;
-        public PlanningPokerSocket(IOptions<PokerConnectionSettings> connectionSettings)
+        private readonly ILogger<PlanningPokerSocket> _logger;
+
+        public PlanningPokerSocket(IOptions<PokerConnectionSettings> connectionSettings, ILogger<PlanningPokerSocket> logger)
         {
             _connectionSettings = connectionSettings.Value;
+            _logger = logger;
             _websocket = new ClientWebSocket();
         }
         public async Task Initialize(Action<string> onMessageFromServer, Action onDisconnected, CancellationToken cancellationToken)
@@ -37,9 +41,12 @@ namespace PlanningPoker.Client.Connections
             {
                 try
                 {
+                    _logger.LogInformation("Disconnecting socket");
                     await _websocket.CloseOutputAsync(WebSocketCloseStatus.NormalClosure, "User requested disconnect", _cancellationToken);
                 }
-                catch (Exception) { }
+                catch (Exception ex) {
+                    _logger.LogError("Error closing socket", ex);
+                }
             }
         }
         private void EnsureConnection()
@@ -83,10 +90,13 @@ namespace PlanningPoker.Client.Connections
                     onMessageFromServer(fullMessage.ToString());
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                onDisconnected();
+                _logger.LogError($"Error communicating with socket", ex);
+                if (onDisconnected != null)
+                {
+                    onDisconnected();
+                }
             }
             finally
             {

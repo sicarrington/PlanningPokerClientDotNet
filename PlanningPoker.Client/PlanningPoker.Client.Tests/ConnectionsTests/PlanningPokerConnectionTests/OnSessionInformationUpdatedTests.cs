@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Moq;
 using PlanningPoker.Client.Connections;
 using PlanningPoker.Client.MessageFactories;
@@ -16,13 +18,14 @@ namespace PlanningPoker.Client.Tests.ConnectionsTests.PlanningPokerConnectionTes
 {
     public class OnSessionInformationUpdatedTests
     {
-        private Mock<IOptions<PokerConnectionSettings>> _options;
-        private Mock<PokerConnectionSettings> _connectionSettings;
-        private Mock<IResponseMessageParser> _responseMessageParser;
-        private Mock<IPokerConnection> _pokerConnection;
-        private Mock<UserCacheProvider> _userCacheProvider;
-        private PlanningPokerConnection _planningPokerConnection;
-        private Mock<IPlanningPokerService> _planningPokerService;
+        private readonly Mock<IOptions<PokerConnectionSettings>> _options;
+        private readonly Mock<PokerConnectionSettings> _connectionSettings;
+        private readonly Mock<IResponseMessageParser> _responseMessageParser;
+        private readonly Mock<IPokerConnection> _pokerConnection;
+        private readonly Mock<UserCacheProvider> _userCacheProvider;
+        private readonly PlanningPokerConnection _planningPokerConnection;
+        private readonly Mock<IPlanningPokerService> _planningPokerService;
+        private readonly Mock<ILogger<PlanningPokerConnection>> _logger;
 
         string _expectedSessionId = "12345";
         Action<string> _callbackMethod = null;
@@ -36,9 +39,10 @@ namespace PlanningPoker.Client.Tests.ConnectionsTests.PlanningPokerConnectionTes
             _pokerConnection = new Mock<IPokerConnection>();
             _userCacheProvider = new Mock<UserCacheProvider>();
             _planningPokerService = new Mock<IPlanningPokerService>();
+            _logger = new Mock<ILogger<PlanningPokerConnection>>();
 
             _planningPokerConnection = new PlanningPokerConnection(_options.Object, _responseMessageParser.Object,
-                _pokerConnection.Object, _userCacheProvider.Object, _planningPokerService.Object);
+                _pokerConnection.Object, _userCacheProvider.Object, _planningPokerService.Object, _logger.Object);
 
             _responseMessageParser.Setup(x => x.Get(It.IsAny<string>())).Returns(new RefreshSessionResponse(_expectedSessionId));
 
@@ -47,7 +51,7 @@ namespace PlanningPoker.Client.Tests.ConnectionsTests.PlanningPokerConnectionTes
                 .Returns(Task.CompletedTask);
         }
         [Fact]
-        public async void GivenConnectedSession_WhenConnectionRaisesRefreshEvent_ThenSessioninformationIsRetrievedUsingSessionService()
+        public async void GivenConnectedSession_WhenConnectionRaisesRefreshEventAndSessionInformationIsNull_ThenSessioninformationIsRetrievedUsingSessionService()
         {
             _planningPokerConnection.OnSessionInformationUpdated((pokerSession) =>
                { });
@@ -92,14 +96,21 @@ namespace PlanningPoker.Client.Tests.ConnectionsTests.PlanningPokerConnectionTes
                 IsHost = isHost,
                 IsObserver = isObserver
             });
-            _planningPokerService.Setup(x => x.GetSessionDetails(_expectedSessionId)).Returns(Task.FromResult(new PokerSession()
+
+            var expectedPokerSession = new PokerSession()
             {
                 SessionId = _expectedSessionId,
                 Participants = pokerSessionUsers
-            }));
+            };
+            var sessionJson = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(System.Text.Json.JsonSerializer.Serialize(expectedPokerSession, new System.Text.Json.JsonSerializerOptions
+            {
+                PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase
+            })));
+
+            _responseMessageParser.Setup(x => x.Get(It.IsAny<string>())).Returns(new RefreshSessionResponse(_expectedSessionId) { PokerSessionInformation = expectedPokerSession });
 
             await _planningPokerConnection.Start(CancellationToken.None);
-            _callbackMethod($"PP 1.0\nMessageType:RefreshSession\nSuccess:true\nSessionId:{_expectedSessionId}");
+            _callbackMethod($"PP 1.0\nMessageType:RefreshSession\nSuccess:true\nSessionId:{_expectedSessionId}\nSessionInformation:{sessionJson}\n");
 
             Thread.Sleep(500);
 

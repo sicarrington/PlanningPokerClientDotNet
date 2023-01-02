@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using PlanningPoker.Client.Connections;
@@ -45,8 +46,9 @@ namespace PlanningPoker.Client.Tests
             var pokerConnection = serviceProvider.GetService<IPokerConnection>();
             var userCacheProvider = serviceProvider.GetService<UserCacheProvider>();
             var planningPokerService = serviceProvider.GetService<IPlanningPokerService>();
+            var logger = serviceProvider.GetService<ILogger<PlanningPokerConnection>>();
 
-            var planningConnection = new PlanningPokerConnection(connectionSettings, responseMessageParser, pokerConnection, userCacheProvider, planningPokerService);
+            var planningConnection = new PlanningPokerConnection(connectionSettings, responseMessageParser, pokerConnection, userCacheProvider, planningPokerService, logger);
             await planningConnection.Start(CancellationToken.None);
             await planningConnection.CreateSession("Simon");
 

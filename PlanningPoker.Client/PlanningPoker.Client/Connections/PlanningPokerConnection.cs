@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.WebSockets;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PlanningPoker.Client.Connections;
 using PlanningPoker.Client.Exceptions;
@@ -18,12 +19,13 @@ namespace PlanningPoker.Client.Connections
 {
     public sealed class PlanningPokerConnection : IPlanningPokerConnection
     {
-        private PokerConnectionSettings _planningSettings;
+        private readonly PokerConnectionSettings _planningSettings;
         private CancellationToken _cancellationToken;
-        private IResponseMessageParser _responseMessageParser;
-        private IPokerConnection _pokerConnection;
-        private UserCacheProvider _userCacheProvider;
-        private IPlanningPokerService _planningPokerService;
+        private readonly IResponseMessageParser _responseMessageParser;
+        private readonly IPokerConnection _pokerConnection;
+        private readonly UserCacheProvider _userCacheProvider;
+        private readonly IPlanningPokerService _planningPokerService;
+        private readonly ILogger<PlanningPokerConnection> _logger;
 
         private Action<Exception> _onError;
         private Action _onDisconnected;
@@ -38,13 +40,15 @@ namespace PlanningPoker.Client.Connections
 
         internal PlanningPokerConnection(IOptions<PokerConnectionSettings> connectionSettings,
             IResponseMessageParser responseMessageParser, IPokerConnection pokerConnection,
-            UserCacheProvider userCacheProvider, IPlanningPokerService planningPokerService)
+            UserCacheProvider userCacheProvider, IPlanningPokerService planningPokerService,
+            ILogger<PlanningPokerConnection> logger)
         {
             _planningSettings = connectionSettings.Value;
             _responseMessageParser = responseMessageParser;
             _pokerConnection = pokerConnection;
             _userCacheProvider = userCacheProvider;
             _planningPokerService = planningPokerService;
+            _logger = logger;
         }
 
         public Task Start(CancellationToken cancellationToken)
@@ -53,12 +57,18 @@ namespace PlanningPoker.Client.Connections
             return _pokerConnection.Initialize(ProcessMessageFromServer, _onDisconnected, cancellationToken);
         }
 
+        public Task Disconnect()
+        {
+            return _pokerConnection.Disconnect();
+        }
+
         public async Task CreateSession(string hostName)
         {
             if (string.IsNullOrWhiteSpace(hostName))
             {
                 throw new ArgumentNullException(nameof(hostName));
             }
+            _logger.LogDebug("Processing CreateSession");
             await _pokerConnection.Send("PP 1.0\nMessageType:NewSession\nUserName:" + hostName);
         }
 
@@ -72,6 +82,7 @@ namespace PlanningPoker.Client.Connections
             {
                 throw new ArgumentNullException(nameof(sessionId));
             }
+            _logger.LogDebug("Processing SubscribeSession");
             var userDetails = await _userCacheProvider.GetUser(sessionId, userId);
             await _pokerConnection.Send($"PP 1.0\nMessageType:SubscribeMessage\nUserId:{userId}\nSessionId:{sessionId}\nToken:{userDetails.Token}");
         }
@@ -85,12 +96,18 @@ namespace PlanningPoker.Client.Connections
             {
                 throw new ArgumentNullException(nameof(userName));
             }
+            _logger.LogDebug("Processing JoinSession");
             await _pokerConnection.Send($"PP 1.0\nMessageType:JoinSession\nUserName:{userName}\nSessionId:{sessionId}\nIsObserver:false");
         }
-        // public async Task PlaceVote()
-        // {
-        //     throw new NotImplementedException();
-        // }
+
+        public async Task PlaceVote(string sessionId, string userId, StoryPoint vote)
+        {
+            var userCache = await _userCacheProvider.GetUser(sessionId, userId);
+                        
+            var message = "PP 1.0\nMessageType:UpdateSessionMemberMessage\nSessionId:" + sessionId + "\nUserToUpdateId:" + userId + "\nUserId:" + userId + "\nUserName:" + userCache.UserName + "\nVote:" + (int)vote + "\nIsHost:" + userCache.IsHost + "\nIsObserver:" + userCache.IsObserver + "\nToken:" + userCache.Token;
+            await _pokerConnection.Send(message);
+        }
+
         private async void ProcessMessageFromServer(string message)
         {
             try
@@ -103,6 +120,11 @@ namespace PlanningPoker.Client.Connections
                     if (typedMessage.Success)
                     {
                         await _userCacheProvider.AddUser(typedMessage.SessionId, typedMessage.UserId, typedMessage.UserToken);
+
+                        //Cache needs immediately to be updated for certain scenarios
+                        var sessionInformation = await _planningPokerService.GetSessionDetails(typedMessage.SessionId);
+                        await UpdateCachedUserDetails(sessionInformation);
+
                         if (_onSessionCreationSucceeded != null)
                         {
                             RunInTask(() => _onSessionCreationSucceeded((
@@ -143,6 +165,10 @@ namespace PlanningPoker.Client.Connections
                     if (typedMessage.Success)
                     {
                         await _userCacheProvider.AddUser(typedMessage.SessionId, typedMessage.UserId, typedMessage.UserToken);
+
+                        var sessionInformation = await _planningPokerService.GetSessionDetails(typedMessage.SessionId);
+                        await UpdateCachedUserDetails(sessionInformation);
+
                         if (_onJoinSessionSucceeded != null)
                         {
                             RunInTask(() => _onJoinSessionSucceeded());
@@ -159,7 +185,12 @@ namespace PlanningPoker.Client.Connections
                 else if (parsedMessage is RefreshSessionResponse)
                 {
                     var typedMessage = parsedMessage as RefreshSessionResponse;
-                    var sessionInformation = await _planningPokerService.GetSessionDetails(typedMessage.SessionId);
+
+                    PokerSession sessionInformation = typedMessage.PokerSessionInformation;
+                    if (sessionInformation == null)
+                    {
+                        sessionInformation = await _planningPokerService.GetSessionDetails(typedMessage.SessionId);
+                    }
 
                     await UpdateCachedUserDetails(sessionInformation);
 
