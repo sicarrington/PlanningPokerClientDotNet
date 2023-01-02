@@ -8,6 +8,7 @@ namespace PlanningPoker.Client.Connections
     public interface IPlanningPokerConnection
     {
         Task Start(CancellationToken cancellationToken);
+        Task Disconnect();
         Task CreateSession(string hostName);
         Task SubscribeSession(string userId, string sessionId);
         Task JoinSession(string sessionId, string userName);

@@ -19,6 +19,7 @@ namespace PlanningPoker.Client.Connections
         public PlanningPokerSocket(IOptions<PokerConnectionSettings> connectionSettings, ILogger<PlanningPokerSocket> logger)
         {
             _connectionSettings = connectionSettings.Value;
+            _logger = logger;
             _websocket = new ClientWebSocket();
         }
         public async Task Initialize(Action<string> onMessageFromServer, Action onDisconnected, CancellationToken cancellationToken)
@@ -92,7 +93,10 @@ namespace PlanningPoker.Client.Connections
             catch (Exception ex)
             {
                 _logger.LogError($"Error communicating with socket", ex);
-                onDisconnected();
+                if (onDisconnected != null)
+                {
+                    onDisconnected();
+                }
             }
             finally
             {

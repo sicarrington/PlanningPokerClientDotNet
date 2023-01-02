@@ -57,6 +57,11 @@ namespace PlanningPoker.Client.Connections
             return _pokerConnection.Initialize(ProcessMessageFromServer, _onDisconnected, cancellationToken);
         }
 
+        public Task Disconnect()
+        {
+            return _pokerConnection.Disconnect();
+        }
+
         public async Task CreateSession(string hostName)
         {
             if (string.IsNullOrWhiteSpace(hostName))

@@ -1,21 +1,22 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
 using PlanningPoker.Client.Connections;
 
 namespace PlanningPoker.Client.Tests.Integration
 {
-	public class PlaceVoteTests
+	public class StopTests
 	{
         private IServiceProvider _serviceProvider;
         private readonly IPlanningConnectionFactory _planningConnectionFactory;
 
-        public PlaceVoteTests()
+        public StopTests()
         {
             _serviceProvider = TestHelper.GetServiceProvider();
             _planningConnectionFactory = _serviceProvider.GetRequiredService<IPlanningConnectionFactory>();
         }
 
         [Fact]
-        public async Task PlaceVoteSucceeds()
+        public async Task StopWorks()
         {
             string? sessionId = null;
             string? userId = null;
@@ -33,15 +34,7 @@ namespace PlanningPoker.Client.Tests.Integration
 
             await TestHelper.AwaitExpectation(() => sessionId != null && userId != null);
 
-            Model.StoryPoint updatedStoryPoint = Model.StoryPoint.NotVoted;
-            connection.OnSessionInformationUpdated(information => {
-                updatedStoryPoint = information.Participants[0].CurrentVote;
-            });
-            await connection.PlaceVote(sessionId, userId, Model.StoryPoint.Four);
-
-            await TestHelper.AwaitExpectation(() => updatedStoryPoint != Model.StoryPoint.NotVoted);
-
-            Assert.Equal(Model.StoryPoint.Four, updatedStoryPoint);
+            await connection.Disconnect();
         }
     }
 }
