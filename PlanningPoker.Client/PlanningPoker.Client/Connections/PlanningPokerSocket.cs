@@ -87,6 +87,8 @@ namespace PlanningPoker.Client.Connections
                         }
                     } while (!result.EndOfMessage);
 
+                    _logger.LogInformation($"Message from server {fullMessage.ToString()}");
+
                     onMessageFromServer(fullMessage.ToString());
                 }
             }
