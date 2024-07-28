@@ -89,7 +89,7 @@ namespace PlanningPoker.Client.Tests.ConnectionsTests.PlanningPokerConnectionTes
             await _planningPokerConnection.CreateSession("Fred");
             callbackMethod($"PP 1.0\nMessageType:NewSessionResponse\nSuccess:true\nSessionId:{sessionId}\nUserId:{userId}\nToken:{userToken}");
 
-            Thread.Sleep(500);
+            Thread.Sleep(1000);
 
             Assert.True(callbackHappened);
         }

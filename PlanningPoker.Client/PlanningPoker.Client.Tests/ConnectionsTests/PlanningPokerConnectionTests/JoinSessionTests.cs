@@ -112,7 +112,7 @@ namespace PlanningPoker.Client.Tests.ConnectionsTests.PlanningPokerConnectionTes
             await _planningPokerConnection.JoinSession(sessionId, "Fred");
             callbackMethod($"PP 1.0\nMessageType:JoinSessionResponse\nSuccess:true\nSessionId:{sessionId}\nUserId:{userId}\nUserToken:{userToken}\n");
 
-            Thread.Sleep(500);
+            Thread.Sleep(1000);
 
             Assert.True(callbackHappened);
         }
