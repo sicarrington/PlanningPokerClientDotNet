@@ -41,7 +41,7 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
       - name: Unit Tests
-        run: dotnet test --verbosity normal --filter FullyQualifiedName!~Integration --logger "trx;LogFileName=unit-test-results.trx"
+        run: dotnet test --verbosity normal ./PlanningPoker.Client.Tests --logger "trx;LogFileName=unit-test-results.trx"
       - name: Unit Test Results
         uses: dorny/test-reporter@v1
         if: always()
