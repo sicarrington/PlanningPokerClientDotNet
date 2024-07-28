@@ -2,9 +2,9 @@ name: BuildTest
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ '*' ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "*" ]
 permissions:
   contents: read
   actions: read
@@ -66,9 +66,7 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
       - name: Integration Tests
-        env:
-            API_KEY: ${{ secrets.apiKey }}
-        run: dotnet test --verbosity normal --filter FullyQualifiedName~integration --logger "trx;LogFileName=integration-test-results.trx" --environment PokerConnectionSettings__ApiKey=$API_KEY
+        run: dotnet test --verbosity normal --filter FullyQualifiedName~Integration --logger "trx;LogFileName=integration-test-results.trx" --environment PokerConnectionSettings__ApiKey=${{ secrets.APIKEY }}
       - name: Integration Test Results
         uses: dorny/test-reporter@v1
         if: always()

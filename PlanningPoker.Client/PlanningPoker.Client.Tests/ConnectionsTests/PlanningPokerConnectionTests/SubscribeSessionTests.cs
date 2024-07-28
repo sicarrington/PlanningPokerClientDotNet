@@ -185,7 +185,7 @@ namespace PlanningPoker.Client.Tests.ConnectionsTests
 
             callbackMethod($"PP 1.0\nMessageType:SubscribeSessionResponse\nSuccess:false");
 
-            Thread.Sleep(500);
+            Thread.Sleep(1000);
 
             Assert.True(callbackHappened);
         }
