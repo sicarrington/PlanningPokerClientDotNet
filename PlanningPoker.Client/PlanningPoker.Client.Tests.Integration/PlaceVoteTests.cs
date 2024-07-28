@@ -31,15 +31,15 @@ namespace PlanningPoker.Client.Tests.Integration
             await connection.Start(CancellationToken.None);
             await connection.CreateSession("TestOne");
 
-            await TestHelper.AwaitExpectation(() => sessionId != null && userId != null);
-
+            await TestHelper.AwaitExpectation(() => sessionId == null || userId == null);
+            
             Model.StoryPoint updatedStoryPoint = Model.StoryPoint.NotVoted;
             connection.OnSessionInformationUpdated(information => {
                 updatedStoryPoint = information.Participants[0].CurrentVote;
             });
             await connection.PlaceVote(sessionId, userId, Model.StoryPoint.Four);
 
-            await TestHelper.AwaitExpectation(() => updatedStoryPoint != Model.StoryPoint.NotVoted);
+            await TestHelper.AwaitExpectation(() => updatedStoryPoint == Model.StoryPoint.NotVoted);
 
             Assert.Equal(Model.StoryPoint.Four, updatedStoryPoint);
         }

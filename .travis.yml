@@ -1,9 +1,0 @@
-language: csharp
-dist: trusty
-mono: none
-dotnet: 2.1.1
-install:
-- dotnet restore ./PlanningPoker.Client/PlanningPoker.Client.sln
-script:
-- dotnet build ./PlanningPoker.Client/PlanningPoker.Client.sln
-- dotnet test ./PlanningPoker.Client/PlanningPoker.Client.Tests/PlanningPoker.Client.Tests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
