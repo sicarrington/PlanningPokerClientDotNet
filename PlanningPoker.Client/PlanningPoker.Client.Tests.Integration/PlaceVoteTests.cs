@@ -31,7 +31,7 @@ namespace PlanningPoker.Client.Tests.Integration
             await connection.Start(CancellationToken.None);
             await connection.CreateSession("TestOne");
 
-            await TestHelper.AwaitExpectation(() => sessionId == null || userId == null, 10);
+            await TestHelper.AwaitExpectation(() => sessionId == null || userId == null);
             
             Model.StoryPoint updatedStoryPoint = Model.StoryPoint.NotVoted;
             connection.OnSessionInformationUpdated(information => {
