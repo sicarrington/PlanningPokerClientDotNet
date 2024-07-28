@@ -11,6 +11,7 @@ namespace PlanningPoker.Client.Tests.Integration
             return new ConfigurationBuilder()
                 //.SetBasePath(outputPath)
                 .AddJsonFile("appsettings.json", optional: false)
+                .AddEnvironmentVariables()
                 .Build();
         }
 
