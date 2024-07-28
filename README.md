@@ -4,7 +4,7 @@
 
 [See the nuget pacakge](https://www.nuget.org/packages/PlanningPoker.Client)
 
-[![Build status](https://ci.appveyor.com/api/projects/status/x2622fil7go09eo9/branch/master?svg=true)](https://ci.appveyor.com/project/sicarrington/planningpokerclientdotnet/branch/master)
+[![Build Status](https://github.com/sicarrington/PlanningPokerClientDotNet/actions/workflows/buildTest.yml/badge.svg)](https://github.com/sicarrington/PlanningPokerClientDotNet/actions/workflows/buildTest.yml)
 
 [![Coverage Status](https://coveralls.io/repos/github/sicarrington/PlanningPokerClientDotNet/badge.svg?branch=master)](https://coveralls.io/github/sicarrington/PlanningPokerClientDotNet?branch=master)
 
